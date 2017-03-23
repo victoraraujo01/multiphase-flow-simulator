@@ -1,6 +1,7 @@
 """
 Correlations
 """
+import math
 
 
 def gas_solubility_in_oil(_pressure,
@@ -152,3 +153,44 @@ def isothermal_oil_compressibility(_pressure,
                  12.61 * _oil_api_gravity)
     denominator = (_pressure + 14.7) * (10 ** 5)
     return numerator/denominator
+
+
+def oil_formation_volume_factor(_pressure,
+                                _bubble_point,
+                                _temperature,
+                                _gas_solubility_in_oil,
+                                _gas_specific_gravity,
+                                _oil_specific_gravity,
+                                _oil_compressibility):
+    """
+    Calculates the oil formation volume factor (B_o) using Standing
+    correlation. The bubble point is necessary because a different correlation
+    must be used below and above it. Also, it is important to remember that if
+    pressure is above bubble point, the gas solubility in oil supplied must be
+    the one at the bubble point (R_sob). Finally, the oil compressibility (c_o)
+    is only needed if pressure is above bubble point.
+
+    Args:
+        _pressure: Pressure at which the oil is (psig). Note that this value is
+                   in psig, so it is relative to the atmospheric pressure.
+        _temperature: Temperature (fahrenheit degrees).
+        _gas_solubility_in_oil_: Gas solubility in oil, Rso (in scf/stb).
+        _gas_specific_gravity: Gas' specific gravity (doesn't have an unit).
+        _oil_specific_gravity: Oil's specific gravity (doesn't have an unit).
+        _oil_api_gravity: Oil's API gravity (API degrees).
+        _oil_compressibility: Oil's compressibility (psi-1). Value doesn't
+                              matter if pressure is below bubble point.
+    Returns:
+        The oil formation volume factor, in bbl/stb.
+    """
+    result = (0.9759 + 12e-5 * (
+        _gas_solubility_in_oil *
+        math.sqrt(_gas_specific_gravity/_oil_specific_gravity) +
+        1.25 * _temperature
+    ) ** 1.2)
+
+    if _pressure > _bubble_point:
+        result = (result *
+                  math.exp(_oil_compressibility * (_bubble_point - _pressure)))
+
+    return result
