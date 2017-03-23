@@ -36,31 +36,6 @@ def production_gas_liquid_ratio(_production_gas_oil_ratio, _water_cut):
     return _production_gas_oil_ratio * (1 - _water_cut)
 
 
-def mixture_bubble_point(_gas_solubility_in_oil,
-                         _gas_solubility_in_water,
-                         _water_cut,
-                         _production_gas_liquid_ratio):
-    """
-    Calculates the mixture's bubble point based on the water cut.
-
-    Args:
-        _gas_solubility_in_oil: Gas solubility in oil, Rso (in the same unit
-                                as GLR_p and Rsw, suggestion: scf/stb)
-        _gas_solubility_in_water: Gas solubility in water, Rsw (in the same
-                                  unit as GLR_p and Rso, suggestion: scf/stb)
-        _water_cut: Water cut, WC
-        _production_gas_liquid_ratio: Production gas liquid ratio, GLR_p (in
-                                      the same unit as Rso and Rsw, suggestion:
-                                      scf/stb)
-
-    Returns:
-        The mixture's bubble point Pb (psi).
-    """
-    divisor = ((1 - _water_cut) * _gas_solubility_in_oil +
-               _water_cut * _gas_solubility_in_water)
-    return _production_gas_liquid_ratio / divisor
-
-
 def free_gas_liquid_ratio(_pressure,
                           _bubble_point,
                           _gas_solubility_in_oil,

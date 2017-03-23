@@ -72,6 +72,50 @@ def gas_solubility_in_water(_pressure, _bubble_point, _temperature):
     return term_a + term_b * (abs_pressure) + term_c * (abs_pressure) ** 2
 
 
+def mixture_bubble_point(_temperature,
+                         _gas_specific_gravity,
+                         _oil_api_gravity,
+                         _water_cut,
+                         _production_gas_liquid_ratio):
+    """
+    Calculates the mixture's bubble point based on the water cut and the
+    prouction gas liquid ratio.
+
+    Args:
+        _water_cut: Water cut, WC.
+        _production_gas_liquid_ratio: Production gas liquid ratio, GLR_p (in
+                                      the same unit as Rso and Rsw, suggestion:
+                                      scf/stb).
+
+    Returns:
+        The mixture's bubble point Pb (psi).
+    """
+    pressure_low = 0
+    pressure_high = 100000
+    bubble_point = 0
+    error = 1
+    while abs(error) > 1e-10:
+        bubble_point = (pressure_low + pressure_high)/2
+        rso = gas_solubility_in_oil(bubble_point,
+                                    pressure_high,
+                                    _temperature,
+                                    _gas_specific_gravity,
+                                    _oil_api_gravity)
+        rsw = gas_solubility_in_water(bubble_point,
+                                      pressure_high,
+                                      _temperature)
+
+        error = (_production_gas_liquid_ratio -
+                 (1 - _water_cut) * rso - _water_cut * rsw)
+
+        if error > 0:
+            pressure_low = bubble_point
+        else:
+            pressure_high = bubble_point
+
+    return bubble_point
+
+
 def isothermal_oil_compressibility(_pressure,
                                    _temperature,
                                    _gas_solubility_in_oil_at_bp,
