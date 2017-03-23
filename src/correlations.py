@@ -1,59 +1,74 @@
 """
 Correlations
-TODO: should I check if pressure is above bubble point inside methods?
 """
 
 
-def gas_solubility_in_oil(pressure,
-                          temperature,
-                          gas_specific_gravity,
-                          oil_api_gravity):
+def gas_solubility_in_oil(_pressure,
+                          _bubble_point,
+                          _temperature,
+                          _gas_specific_gravity,
+                          _oil_api_gravity):
     """
-    Calculates gas solubility in oil (Rso) using Standing correlation.
+    Calculates gas solubility in oil (Rso) using Standing correlation. If
+    pressure is higher than the mixture's bubble point, returns the Rso at
+    bubble point.
 
     Args:
-        gas_specific_gravity: Gas' specific gravity (doesn't have an unit)
-        pressure: Pressure at which the gas is (psig).
-        temperature: Temperature at which the gas is (fahrenheit degrees)
-        oil_api_gravity: Oil's API gravity (API degrees)
+        _gas_specific_gravity: Gas' specific gravity (doesn't have an unit).
+        _pressure: Pressure at which the gas is (psig). Note that this value is
+                   in psig, so it is relative to the atmospheric pressure.
+        _bubble_point: Mixture's bubble point (psig).  Note that this value is
+                       in psig, so it is relative to the atmospheric pressure.
+        _temperature: Temperature at which the gas is (fahrenheit degrees).
+        _oil_api_gravity: Oil's API gravity (API degrees).
 
     Returns:
-        The gas solubility in oil, Rso (scf/stb)
+        The gas solubility in oil, Rso (scf/stb).
     """
-    exponent = 0.0125 * oil_api_gravity - 0.00091 * temperature
-    first_term = (pressure + 14.7)/18.2 + 1.4
-    return gas_specific_gravity * (first_term * 10 ** exponent) ** 1.2048
+    if _pressure > _bubble_point:
+      _pressure = _bubble_point
+
+    exponent = 0.0125 * _oil_api_gravity - 0.00091 * _temperature
+    first_term = (_pressure + 14.7)/18.2 + 1.4
+    return _gas_specific_gravity * (first_term * 10 ** exponent) ** 1.2048
 
 
-def gas_solubility_in_water(pressure, temperature):
+def gas_solubility_in_water(_pressure, _bubble_point, _temperature):
     """
     Calculates gas solubility in water (Rsw) using Culberson and Maketta
-    correlation.
+    correlation. If pressure is higher than the mixture's bubble point, returns
+    the Rso at bubble point.
 
     Args:
-        pressure: Pressure at which the gas is (psig).
-        temperature: Temperature at which the gas is (fahrenheit degrees)
+        _pressure: Pressure at which the gas is (psig). Note that this value is
+                   in psig, so it is relative to the atmospheric pressure.
+        _bubble_point: Mixture's bubble point (psig). Note that this value is
+                       in psig, so it is relative to the atmospheric pressure.
+        _temperature: Temperature at which the gas is (fahrenheit degrees).
 
     Returns:
-        The gas solubility in water, Rsw (scf/stb)
+        The gas solubility in water, Rsw (scf/stb).
     """
     term_a = (8.15839 -
-              6.12265e-2 * temperature +
-              1.91663e-4 * (temperature ** 2) -
-              2.1654e-7 * (temperature ** 3))
+              6.12265e-2 * _temperature +
+              1.91663e-4 * (_temperature ** 2) -
+              2.1654e-7 * (_temperature ** 3))
 
     term_b = (1.01021e-2 -
-              7.44241e-5 * temperature +
-              3.05553e-7 * (temperature ** 2) -
-              2.94883e-10 * (temperature ** 3))
+              7.44241e-5 * _temperature +
+              3.05553e-7 * (_temperature ** 2) -
+              2.94883e-10 * (_temperature ** 3))
 
     term_c = (-9.02505 +
-              0.130237 * temperature -
-              8.53425e-4 * (temperature ** 2) +
-              2.34122e-6 * (temperature ** 3) -
-              2.37049e-9 * (temperature ** 4)) * (10 ** -7)
+              0.130237 * _temperature -
+              8.53425e-4 * (_temperature ** 2) +
+              2.34122e-6 * (_temperature ** 3) -
+              2.37049e-9 * (_temperature ** 4)) * (10 ** -7)
 
-    abs_pressure = pressure + 14.7
+    if _pressure > _bubble_point:
+      _pressure = _bubble_point
+
+    abs_pressure = _pressure + 14.7
     return term_a + term_b * (abs_pressure) + term_c * (abs_pressure) ** 2
 
 

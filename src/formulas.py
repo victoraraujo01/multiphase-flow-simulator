@@ -9,8 +9,8 @@ def water_cut(_oil_flow_rate, _water_flow_rate):
     Supplied oil and water rates must be in the same unit.
 
     Args:
-        oil_flow_rate: Current oil flow rate
-        water_flow_rate: Current water flow rate
+        oil_flow_rate: Current oil flow rate.
+        water_flow_rate: Current water flow rate.
 
     Returns:
         THe water cut ratio, known as WC or BSW (between 0 and 1).
@@ -26,8 +26,8 @@ def production_gas_liquid_ratio(_production_gas_oil_ratio, _water_cut):
 
     Args:
         _production_gas_oil_ratio: Production gas oil ratio, RGO (suggested
-                                  unit: scf/stb)
-        _water_cut: Water cut
+                                  unit: scf/stb).
+        _water_cut: Water cut.
 
     Returns:
         The production gas liquid ratio, RGL (in the same unit as the supplied
@@ -62,6 +62,7 @@ def mixture_bubble_point(_gas_solubility_in_oil,
 
 
 def free_gas_liquid_ratio(_pressure,
+                          _bubble_point,
                           _gas_solubility_in_oil,
                           _gas_solubility_in_water,
                           _water_cut,
@@ -70,25 +71,24 @@ def free_gas_liquid_ratio(_pressure,
     Calculates the free gas liquid ratio.
 
     Args:
-        _pressure: Pressure (psi)
+        _pressure: Pressure at which the gas is (psig). Note that this value is
+                   in psig, so it is relative to the atmospheric pressure.
+        _bubble_point: Mixture's bubble point (psig).  Note that this value is
+                       in psig, so it is relative to the atmospheric pressure.
         _gas_solubility_in_oil: Gas solubility in oil, Rso (in the same unit
-                                as GLR_p and Rsw, suggestion: scf/stb)
+                                as GLR_p and Rsw, suggestion: scf/stb).
         _gas_solubility_in_water: Gas solubility in water, Rsw (in the same
-                                  unit as GLR_p and Rso, suggestion: scf/stb)
-        _water_cut: Water cut, WC
+                                  unit as GLR_p and Rso, suggestion: scf/stb).
+        _water_cut: Water cut, WC.
         _production_gas_liquid_ratio: Production gas liquid ratio, GLR_p (in
                                       the same unit as Rso and Rsw, suggestion:
-                                      scf/stb)
+                                      scf/stb).
 
     Returns:
         The free gas liquid ratio if pressure is below bubble point. Otherwise,
         returns zero.
     """
-    p_b = mixture_bubble_point(_gas_solubility_in_oil,
-                               _gas_solubility_in_water,
-                               _water_cut,
-                               _production_gas_liquid_ratio)
-    if _pressure >= p_b:
+    if _pressure >= _bubble_point:
         return 0
     else:
         return (_production_gas_liquid_ratio -
