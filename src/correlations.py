@@ -91,10 +91,10 @@ def mixture_bubble_point(_temperature,
     Returns:
         The mixture's bubble point Pb (psi).
     """
-    pressure_low = 0
-    pressure_high = 100000
-    bubble_point = 0
-    error = 1
+    pressure_low = 0.0
+    pressure_high = 100000.0
+    bubble_point = 0.0
+    error = 1.0
     while abs(error) > 1e-10:
         bubble_point = (pressure_low + pressure_high)/2
         rso = gas_solubility_in_oil(bubble_point,
@@ -109,7 +109,7 @@ def mixture_bubble_point(_temperature,
         error = (_production_gas_liquid_ratio -
                  (1 - _water_cut) * rso - _water_cut * rsw)
 
-        if error > 0:
+        if error > 0.0:
             pressure_low = bubble_point
         else:
             pressure_high = bubble_point
