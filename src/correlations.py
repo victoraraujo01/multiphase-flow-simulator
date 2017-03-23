@@ -117,6 +117,7 @@ def mixture_bubble_point(_temperature,
 
 
 def isothermal_oil_compressibility(_pressure,
+                                   _bubble_point,
                                    _temperature,
                                    _gas_solubility_in_oil_at_bp,
                                    _gas_specific_gravity,
@@ -128,17 +129,22 @@ def isothermal_oil_compressibility(_pressure,
     only (Vasquez- Beggs Correlation).
 
     Args:
-        _pressure: Pressure (psig)
-        _temperature: Temperature (fahrenheit degrees)
+        _pressure: Pressure at which the oil is (psig). Note that this value is
+                   in psig, so it is relative to the atmospheric pressure, and
+                   must be above bubble point.
+        _temperature: Temperature (fahrenheit degrees).
         _gas_solubility_in_oil_at_bp: Gas solubility in oil at bubble point,
-                                      Rsob (in scf/stb)
-        _gas_specific_gravity: Gas' specific gravity (doesn't have an unit)
-        _oil_api_gravity: Oil's API gravity (API degrees)
+                                      Rsob (in scf/stb).
+        _gas_specific_gravity: Gas' specific gravity (doesn't have an unit).
+        _oil_api_gravity: Oil's API gravity (API degrees).
 
     Returns:
         The compressibility of the oil as a single-phase liquid with a certain
         amount of gas in solution in psi-1.
     """
+    if pressure < _bubble_point:
+        raise ValueError('Pressure must be below bubble point.')
+
     numerator = (-1433 +
                  5 * _gas_solubility_in_oil_at_bp +
                  17.2 * _temperature -
