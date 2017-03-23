@@ -27,7 +27,7 @@ def gas_solubility_in_oil(_pressure,
         The gas solubility in oil, Rso (scf/stb).
     """
     if _pressure > _bubble_point:
-      _pressure = _bubble_point
+        _pressure = _bubble_point
 
     exponent = 0.0125 * _oil_api_gravity - 0.00091 * _temperature
     first_term = (_pressure + 14.7)/18.2 + 1.4
