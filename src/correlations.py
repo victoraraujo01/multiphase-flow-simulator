@@ -67,7 +67,7 @@ def gas_solubility_in_water(_pressure, _bubble_point, _temperature):
               2.37049e-9 * (_temperature ** 4)) * (10 ** -7)
 
     if _pressure > _bubble_point:
-      _pressure = _bubble_point
+        _pressure = _bubble_point
 
     abs_pressure = _pressure + 14.7
     return term_a + term_b * (abs_pressure) + term_c * (abs_pressure) ** 2
