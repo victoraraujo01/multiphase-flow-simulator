@@ -179,9 +179,9 @@ def live_water_density(_water_specific_gravity,
     return density
 
 
-def oil_flow_rate(_liquid_flow_rate,
-                  _oil_formation_volume_factor,
-                  _water_cut):
+def in_situ_oil_flow_rate(_liquid_flow_rate,
+                          _oil_formation_volume_factor,
+                          _water_cut):
     """
     Calculates the in-situ oil flow rate at the given conditions
 
