@@ -348,3 +348,20 @@ def gas_formation_volume_factor(_pressure,
     )
 
     return _gas_formation_volume_factor
+
+
+def dead_oil_viscosity(_temperature, _oil_api_gravity):
+    """
+    Calculates the dead oil viscosity using the Beggs and Robinson correlation.
+
+    Args:
+        _temperature (double): Temperature (fahrenheit degrees).
+        _oil_api_gravity (double): Oil's API gravity (API degrees).
+
+    Returns:
+        The dead oil viscosity in :math:`cp`.
+    """
+    term_x = (10 ** (3.0324 - 0.02023 * _oil_api_gravity) /
+              (_temperature ** 1.163))
+    _dead_oil_viscosity = 10 ** term_x - 1
+    return _dead_oil_viscosity
