@@ -105,3 +105,21 @@ def gas_density(_gas_specific_gravity,
     density = (conversion_factor * _gas_specific_gravity /
                _gas_formation_volume_factor)
     return density
+
+
+def dead_oil_density(_oil_specific_gravity, _in_cubic_feet=False):
+    """
+    Calculates the dead oil density at standard conditions
+
+    Args:
+        _oil_specific_gravity (double): Oil's specific gravity (no unit).
+        _in_cubic_feet (boolean, optional): if `True` density will be in
+            :math:`lbm/scf`. Otherwise it will be in :math:`lbm/stb`. Defaults
+            to `False`.
+    Returns:
+        The oil density in :math:`lbm/scf` or :math:`lbm/stb`.
+    """
+    _water_density = 62.4
+    if not _in_cubic_feet:
+        _water_density = 350.0
+    return _water_density * _oil_specific_gravity
