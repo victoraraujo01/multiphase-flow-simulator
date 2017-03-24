@@ -182,3 +182,19 @@ class TestCorrelations(object):
             answers.append(answer)
         assert answers == pytest.approx(expected_answers)
 
+    def test_gas_deviation_factor(self):
+        answers = []
+        expected_answers = [
+            0.995264833426288, 0.993657411592812, 0.987083853157865,
+            0.963265409927398, 0.705764343983635, 1.03495623866993,
+            2.0249883893761
+        ]
+        for pressure in self.pressures:
+            answer = correlations.gas_deviation_factor(
+                pressure,
+                self.temperature,
+                self.gas_specific_gravity
+            )
+            answers.append(answer)
+        assert answers == pytest.approx(expected_answers)
+
