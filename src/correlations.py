@@ -269,3 +269,37 @@ def water_formation_volume_factor(_pressure,
         result = result - 3.33e-6 * (_pressure + 14.7)
 
     return result
+
+
+def gas_deviation_factor(_pressure,
+                         _temperature,
+                         _gas_specific_gravity):
+    """
+    Calculates the gas deviation factor or compressibility factor Z using Papay
+    correlation.
+
+    Args:
+        _pressure: Pressure at which the gas is (psig). Note that this value is
+                   in psig, so it is relative to the atmospheric pressure.
+        _temperature: Temperature (fahrenheit degrees).
+        _gas_specific_gravity: Gas' specific gravity (doesn't have an unit).
+    Returns:
+        The gas deviation factor.
+    """
+    pseudo_critical_temperature = (168. +
+                                   325. * _gas_specific_gravity -
+                                   12.5 * _gas_specific_gravity ** 2)
+    pseudo_critical_pressure = (677. +
+                                15.0 * _gas_specific_gravity -
+                                37.5 * _gas_specific_gravity ** 2)
+
+    pseudo_reduced_temperature = ((_temperature + 460) /
+                                  pseudo_critical_temperature)
+
+    pseudo_reduced_pressure = ((_pressure + 14.7) /
+                               pseudo_critical_pressure)
+
+    pseudo_reduced_ratio = pseudo_reduced_pressure/pseudo_reduced_temperature
+    deviation_factor = (1 - pseudo_reduced_ratio *
+                        (0.3675 - 0.04188423 * pseudo_reduced_ratio))
+    return deviation_factor
