@@ -329,7 +329,7 @@ def gas_formation_volume_factor(_pressure,
     _gas_deviation_factor = gas_deviation_factor(_pressure,
                                                  _temperature,
                                                  _gas_specific_gravity)
-    _gas_deviation_factor_std = gas_deviation_factor(14.7,
+    _gas_deviation_factor_std = gas_deviation_factor(0,
                                                      60.0,
                                                      _gas_specific_gravity)
     conversion_factor = 0.028269
