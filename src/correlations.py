@@ -365,3 +365,48 @@ def dead_oil_viscosity(_temperature, _oil_api_gravity):
               (_temperature ** 1.163))
     _dead_oil_viscosity = 10 ** term_x - 1
     return _dead_oil_viscosity
+
+
+def live_oil_viscosity(_pressure,
+                       _bubble_point,
+                       _temperature,
+                       _gas_solubility_in_oil,
+                       _oil_api_gravity):
+    """
+    Calculates the live oil viscosity. If pressure is below bubble point, the
+    Beggs and Robinson correlation will be used. Instead, if it is above bubble
+    point, the Beggs and Velasquez correlation will be used.
+
+    Args:
+        _pressure (double): Pressure at which the oil is (:math:`psig`). Note
+            that this value is relative to the atmospheric pressure.
+        _bubble_point (double): Mixture's bubble point (:math:`psig`). Note
+            that this value is relative to the atmospheric pressure.
+        _temperature (double): Temperature (fahrenheit degrees).
+        _gas_solubility_in_oil_ (double): Gas solubility in oil, :math:`R_{so}`
+            (in :math:`scf/stb`). **If pressure is above bubble point, the gas
+            solubility in oil supplied must be the one at the bubble point
+            (:math:`R_{sob}`)**.
+        _oil_api_gravity (double): Oil's API gravity (API degrees).
+
+    Returns:
+        The live oil viscosity in :math:`cp`.
+    """
+    _dead_oil_viscosity = dead_oil_viscosity(_temperature, _oil_api_gravity)
+
+    _live_oil_viscosity = (10.715 *
+                           (_gas_solubility_in_oil + 100) ** (-0.515) *
+                           _dead_oil_viscosity **
+                           (5.44 * (_gas_solubility_in_oil + 150) ** (-0.338)))
+
+    if _pressure > _bubble_point:
+        _live_oil_viscosity = (
+            _live_oil_viscosity *
+            ((_pressure + 14.7) / (_bubble_point + 14.7)) ** (
+                2.6 * (_pressure + 14.7) ** 1.187 * math.exp(
+                    -11.513 - 8.98e-5 * (_pressure + 14.7)
+                )
+            )
+        )
+
+    return _live_oil_viscosity
