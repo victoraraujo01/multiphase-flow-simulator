@@ -198,3 +198,24 @@ def in_situ_oil_flow_rate(_liquid_flow_rate,
                  _liquid_flow_rate * _oil_formation_volume_factor *
                  5.614583 / 86400)
     return flow_rate
+
+
+def in_situ_water_flow_rate(_liquid_flow_rate,
+                            _water_formation_volume_factor,
+                            _water_cut):
+    """
+    Calculates the in-situ water flow rate at the given conditions
+
+    Args:
+        _liquid_flow_rate (double): Total liquid flow rate (bpd).
+        _water_formation_volume_factor (double): Water formation volume factor,
+            Bw (:math:`bbl/stb`).
+        _water_cut: Water cut, WC.
+
+    Returns:
+        The in-situ water flow rate in :math:`ft^3/s`.
+    """
+    flow_rate = (_water_cut *
+                 _liquid_flow_rate * _water_formation_volume_factor *
+                 5.614583 / 86400)
+    return flow_rate
