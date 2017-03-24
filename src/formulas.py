@@ -69,3 +69,10 @@ def free_gas_liquid_ratio(_pressure,
         return (_production_gas_liquid_ratio -
                 _gas_solubility_in_oil * (1 - _water_cut) -
                 _gas_solubility_in_water * _water_cut)
+
+
+def specific_gravity_from_api(api_gravity):
+    """
+    Converts the oil's API gravity to specific gravity.
+    """
+    return 141.5/(api_gravity + 131.5)

@@ -117,12 +117,12 @@ def mixture_bubble_point(_temperature,
     return bubble_point
 
 
-def isothermal_oil_compressibility(_pressure,
-                                   _bubble_point,
-                                   _temperature,
-                                   _gas_solubility_in_oil_at_bp,
-                                   _gas_specific_gravity,
-                                   _oil_api_gravity):
+def oil_compressibility(_pressure,
+                        _bubble_point,
+                        _temperature,
+                        _gas_solubility_in_oil_at_bp,
+                        _gas_specific_gravity,
+                        _oil_api_gravity):
     """
     Calculates the isothermal oil compressibility using Vasquez correlation.
     This is the compressibility of the oil as a single-phase liquid with a
@@ -165,7 +165,7 @@ def oil_formation_volume_factor(_pressure,
                                 _oil_specific_gravity,
                                 _oil_compressibility):
     """
-    Calculates the oil formation volume factor (B_o) using Standing
+    Calculates the oil formation volume factor (B_o) using Standing's
     correlation. The bubble point is necessary because a different correlation
     must be used below and above it. Also, it is important to remember that if
     pressure is above bubble point, the gas solubility in oil supplied must be
@@ -175,6 +175,8 @@ def oil_formation_volume_factor(_pressure,
     Args:
         _pressure: Pressure at which the oil is (psig). Note that this value is
                    in psig, so it is relative to the atmospheric pressure.
+        _bubble_point: Mixture's bubble point (psig). Note that this value is
+                       in psig, so it is relative to the atmospheric pressure.
         _temperature: Temperature (fahrenheit degrees).
         _gas_solubility_in_oil_: Gas solubility in oil, Rso (in scf/stb).
         _gas_specific_gravity: Gas' specific gravity (doesn't have an unit).
@@ -194,5 +196,76 @@ def oil_formation_volume_factor(_pressure,
     if _pressure > _bubble_point:
         result = (result *
                   math.exp(_oil_compressibility * (_bubble_point - _pressure)))
+
+    return result
+
+
+def water_compressibility(_pressure,
+                          _bubble_point,
+                          _temperature,
+                          _gas_solubility_in_water_at_bp):
+    """
+    Calculates the isothermal water compressibility using Dodson and Standing
+    correlation. This is the compressibility of the water as a single-phase
+    liquid with a certain amount of gas in solution. It is valid above the
+    bubble point only.
+
+    Args:
+        _pressure: Pressure at which the water is (psig). Note that this value
+                   is in psig, so it is relative to the atmospheric pressure,
+                   and must be above bubble point.
+        _bubble_point: Mixture's bubble point (psig). Note that this value is
+                       in psig, so it is relative to the atmospheric pressure.
+        _temperature: Temperature (fahrenheit degrees).
+        _gas_solubility_in_water_at_bp: Gas solubility in water at bubble point
+                                        Rswb (in scf/stb).
+
+    Returns:
+        The compressibility of the water as a single-phase liquid with a
+        certain amount of gas in solution in psi-1.
+    """
+    if _pressure < _bubble_point:
+        raise ValueError('Pressure must be below bubble point.')
+
+    term_a = 3.8546 - 1.34e-4 * (_pressure + 14.7)
+    term_b = -0.01052 + 4.77e-7 * (_pressure + 14.7)
+    term_c = 3.9267e-5 - 8.8e-10 * (_pressure + 14.7)
+
+    result = ((term_a + term_b * _temperature + term_c * (_temperature ** 2)) *
+              (1 + 8.9e-3 * _gas_solubility_in_water_at_bp) / 1e6)
+    return result
+
+
+def water_formation_volume_factor(_pressure,
+                                  _bubble_point,
+                                  _temperature,
+                                  _water_compressibility):
+    """
+    Calculates the water formation volume factor (B_w) using Gould's
+    correlation. The bubble point is necessary because a different correlation
+    must be used below and above it and the water compressibility (c_w)
+    is only needed if pressure is above bubble point.
+
+    Args:
+        _pressure: Pressure at which the oil is (psig). Note that this value is
+                   in psig, so it is relative to the atmospheric pressure.
+        _bubble_point: Mixture's bubble point (psig). Note that this value is
+                       in psig, so it is relative to the atmospheric pressure.
+        _temperature: Temperature (fahrenheit degrees).
+        _water_compressibility: Waters compressibility (psi-1). Value doesn't
+                                matter if pressure is below bubble point.
+    Returns:
+        The water formation volume factor, in bbl/stb.
+    """
+    result = (1.0 +
+              1.2e-4 * (_temperature - 60) +
+              1.0e-6 * (_temperature - 60) ** 2)
+
+    if _pressure >= _bubble_point:
+        result = result - 3.33e-6 * (_bubble_point + 14.7)
+        result = (result * math.exp(_water_compressibility *
+                                    (_bubble_point - _pressure)))
+    else:
+        result = result - 3.33e-6 * (_pressure + 14.7)
 
     return result
