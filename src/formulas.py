@@ -177,3 +177,24 @@ def live_water_density(_water_specific_gravity,
                 _water_cut) /
                5.615 * _water_formation_volume_factor)
     return density
+
+
+def oil_flow_rate(_liquid_flow_rate,
+                  _oil_formation_volume_factor,
+                  _water_cut):
+    """
+    Calculates the in-situ oil flow rate at the given conditions
+
+    Args:
+        _liquid_flow_rate (double): Total liquid flow rate (bpd).
+        _oil_formation_volume_factor (double): Oil formation volume factor, Bo
+            (:math:`bbl/stb`).
+        _water_cut: Water cut, WC.
+
+    Returns:
+        The in-situ oil flow rate in :math:`ft^3/s`.
+    """
+    flow_rate = ((1 - _water_cut) *
+                 _liquid_flow_rate * _oil_formation_volume_factor *
+                 5.614583 / 86400)
+    return flow_rate
