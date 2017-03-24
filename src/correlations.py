@@ -303,3 +303,43 @@ def gas_deviation_factor(_pressure,
     deviation_factor = (1 - pseudo_reduced_ratio *
                         (0.3675 - 0.04188423 * pseudo_reduced_ratio))
     return deviation_factor
+
+
+def gas_formation_volume_factor(_pressure,
+                                _temperature,
+                                _gas_specific_gravity,
+                                _in_cubic_feet=True):
+    """
+    Calculates the gas formation volume factor. This is a convenience method
+    that uses the gas specific gravity to calculate the gas deviation factor
+    under the supplied pressure and temperature and under standard conditions.
+
+    Args:
+        _pressure (double): Pressure at which the gas is (psig). Note that this
+            value is in psig, so it is relative to the atmospheric pressure.
+        _temperature (double): Temperature (fahrenheit degrees).
+        _gas_specific_gravity (double): Gas' specific gravity (doesn't have an
+            unit).
+        _in_cubic_feet (boolean): If ``true``, result will be in
+            :math:`ft^3/scf`. If set to ``false``, result will be in
+            :math:`bbl/scf`.
+    Returns:
+        The gas deviation factor.
+    """
+    _gas_deviation_factor = gas_deviation_factor(_pressure,
+                                                 _temperature,
+                                                 _gas_specific_gravity)
+    _gas_deviation_factor_std = gas_deviation_factor(14.7,
+                                                     60.0,
+                                                     _gas_specific_gravity)
+    conversion_factor = 0.028269
+    if not _in_cubic_feet:
+        conversion_factor = 0.00503475
+
+    _gas_formation_volume_factor = (
+        conversion_factor *
+        (_temperature + 460) / (_pressure + 14.7) *
+        _gas_deviation_factor / _gas_deviation_factor_std
+    )
+
+    return _gas_formation_volume_factor
