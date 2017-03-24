@@ -94,7 +94,7 @@ def gas_density(_gas_specific_gravity,
             factor (:math:`ft^3/scf` or :math:`bbl/scf` - use argument
             bg_in_cubic_feet accordingly).
         _in_cubic_feet (boolean, optional): must be `True` if supplied gas
-            formation volume factor is in :math:`ft^3/scf` or `False` if it'
+            formation volume factor is in :math:`ft^3/scf` or `False` if it's
             in :math:`bbl/scf`. Defaults to True.
 
     Returns:

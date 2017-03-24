@@ -163,29 +163,34 @@ def oil_formation_volume_factor(_pressure,
                                 _gas_solubility_in_oil,
                                 _gas_specific_gravity,
                                 _oil_specific_gravity,
-                                _oil_compressibility):
+                                _oil_compressibility=0.0):
     """
-    Calculates the oil formation volume factor (B_o) using Standing's
+    Calculates the oil formation volume factor (:math:`B_o`) using Standing's
     correlation. The bubble point is necessary because a different correlation
     must be used below and above it. Also, it is important to remember that if
     pressure is above bubble point, the gas solubility in oil supplied must be
-    the one at the bubble point (R_sob). Finally, the oil compressibility (c_o)
-    is only needed if pressure is above bubble point.
+    the one at the bubble point (:math:`R_{sob}`). Finally, the oil
+    compressibility (:math:`c_o`) is only needed if pressure is above bubble
+    point.
 
     Args:
-        _pressure: Pressure at which the oil is (psig). Note that this value is
-                   in psig, so it is relative to the atmospheric pressure.
-        _bubble_point: Mixture's bubble point (psig). Note that this value is
-                       in psig, so it is relative to the atmospheric pressure.
-        _temperature: Temperature (fahrenheit degrees).
-        _gas_solubility_in_oil_: Gas solubility in oil, Rso (in scf/stb).
-        _gas_specific_gravity: Gas' specific gravity (doesn't have an unit).
-        _oil_specific_gravity: Oil's specific gravity (doesn't have an unit).
-        _oil_api_gravity: Oil's API gravity (API degrees).
-        _oil_compressibility: Oil's compressibility (psi-1). Value doesn't
-                              matter if pressure is below bubble point.
+        _pressure (double): Pressure at which the oil is (:math:`psig`). Note
+            that this value is relative to the atmospheric pressure.
+        _bubble_point (double): Mixture's bubble point (:math:`psig`). Note
+            that this value is relative to the atmospheric pressure.
+        _temperature (double): Temperature (fahrenheit degrees).
+        _gas_solubility_in_oil_ (double): Gas solubility in oil, :math:`R_{so}`
+            (in :math:`scf/stb`). **If pressure is above bubble point, the gas
+            solubility in oil supplied must be the one at the bubble point
+            (:math:`R_{sob}`).**
+        _gas_specific_gravity (double): Gas' specific gravity (no unit).
+        _oil_specific_gravity (double): Oil's specific gravity (no unit).
+        _oil_api_gravity (double): Oil's API gravity (API degrees).
+        _oil_compressibility (double, optional): Oil's compressibility
+            (:math:`psi^{-1}`). Value can be omitted if pressure is below
+            bubble point.
     Returns:
-        The oil formation volume factor, in bbl/stb.
+        The oil formation volume factor, in :math:`bbl/stb`.
     """
     result = (0.9759 + 12e-5 * (
         _gas_solubility_in_oil *
@@ -320,7 +325,7 @@ def gas_formation_volume_factor(_pressure,
         _temperature (double): Temperature (fahrenheit degrees).
         _gas_specific_gravity (double): Gas' specific gravity (doesn't have an
             unit).
-        _in_cubic_feet (boolean): If ``true``, result will be in
+        _in_cubic_feet (boolean, optional): If ``true``, result will be in
             :math:`ft^3/scf`. If set to ``false``, result will be in
             :math:`bbl/scf`.
     Returns:
