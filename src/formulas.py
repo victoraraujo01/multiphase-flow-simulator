@@ -161,7 +161,7 @@ def live_water_density(_water_specific_gravity,
     Calculates the live water density at the given conditions
 
     Args:
-        _water_specific_gravity (double): Water'ss specific gravity (no unit).
+        _water_specific_gravity (double): Water's specific gravity (no unit).
         _gas_specific_gravity (double): Gas' specific gravity (no unit).
         _gas_solubility_in_water (double): Gas solubility in water, Rsw
             (:math:`scf/stb`).
