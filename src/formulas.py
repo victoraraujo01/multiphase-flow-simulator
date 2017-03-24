@@ -150,3 +150,30 @@ def live_oil_density(_oil_specific_gravity,
                 (1 - _water_cut)) /
                5.615 * _oil_formation_volume_factor)
     return density
+
+
+def live_water_density(_water_specific_gravity,
+                       _gas_specific_gravity,
+                       _gas_solubility_in_water,
+                       _water_formation_volume_factor,
+                       _water_cut):
+    """
+    Calculates the live water density at the given conditions
+
+    Args:
+        _water_specific_gravity (double): Water'ss specific gravity (no unit).
+        _gas_specific_gravity (double): Gas' specific gravity (no unit).
+        _gas_solubility_in_water (double): Gas solubility in water, Rsw
+            (:math:`scf/stb`).
+        _water_formation_volume_factor (double): Oil formation volume factor,
+            Bw (:math:`bbl/stb`)
+        _water_cut: Water cut, WC.
+
+    Returns:
+        The live water density in :math:`lbm/ft^3`.
+    """
+    density = ((350 * _water_specific_gravity +
+                0.0764 * _gas_specific_gravity * _gas_solubility_in_water *
+                _water_cut) /
+               5.615 * _water_formation_volume_factor)
+    return density
