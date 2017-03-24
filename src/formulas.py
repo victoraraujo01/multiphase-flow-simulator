@@ -123,3 +123,30 @@ def dead_oil_density(_oil_specific_gravity, _in_cubic_feet=False):
     if not _in_cubic_feet:
         _water_density = 350.0
     return _water_density * _oil_specific_gravity
+
+
+def live_oil_density(_oil_specific_gravity,
+                     _gas_specific_gravity,
+                     _gas_solubility_in_oil,
+                     _oil_formation_volume_factor,
+                     _water_cut):
+    """
+    Calculates the live oil density at the given conditions
+
+    Args:
+        _oil_specific_gravity (double): Oil's specific gravity (no unit).
+        _gas_specific_gravity (double): Gas' specific gravity (no unit).
+        _gas_solubility_in_oil (double): Gas solubility in oil, Rso
+            (:math:`scf/stb`).
+        _oil_formation_volume_factor (double): Oil formation volume factor, Bo
+            (:math:`bbl/stb`)
+        _water_cut: Water cut, WC.
+
+    Returns:
+        The live oil density in :math:`lbm/ft^3`.
+    """
+    density = ((350 * _oil_specific_gravity +
+                0.0764 * _gas_specific_gravity * _gas_solubility_in_oil *
+                (1 - _water_cut)) /
+               5.615 * _oil_formation_volume_factor)
+    return density
