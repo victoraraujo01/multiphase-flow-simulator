@@ -2,6 +2,8 @@
 Formulas
 """
 
+import math
+
 
 def water_cut(_oil_flow_rate, _water_flow_rate):
     """
@@ -240,3 +242,18 @@ def in_situ_gas_flow_rate(_liquid_flow_rate,
                  _liquid_flow_rate * _gas_formation_volume_factor *
                  5.614583 / 86400)
     return flow_rate
+
+
+def superficial_velocity(_in_situ_flow_rate, _diameter):
+    """
+    Transforms the passed in-situ flow rate into superficial velocity at the
+    given diameter.
+
+    Args:
+        _in_situ_flow_rate (double): Total liquid flow rate (:math:`ft^3/s`).
+        _diameter (double): The tubing diameter (:math:`in`).
+
+    Returns:
+        The superficial velocity in :math:`ft/s`.
+    """
+    return 4 * _in_situ_flow_rate / (math.pi * (_diameter / 12) ** 2)
