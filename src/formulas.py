@@ -76,3 +76,32 @@ def specific_gravity_from_api(api_gravity):
     Converts the oil's API gravity to specific gravity.
     """
     return 141.5/(api_gravity + 131.5)
+
+
+def gas_density(_gas_specific_gravity,
+                _gas_formation_volume_factor=1.0,
+                _bg_in_cubic_feet=True):
+    """
+    Calculates the gas density at standard conditions (if no gas formation
+    volume factor, Bg, is given) or uses the given Bg to calculate it at
+    different conditions.
+
+    Args:
+        _gas_specific_gravity (double):  Gas' specific gravity (no unit)
+        _gas_formation_volume_factor (double, optional): Gas' formation volume
+            factor (:math:`ft^3/scf` or :math:`bbl/scf` - use argument
+            bg_in_cubic_feet accordingly).
+        _in_cubic_feet (boolean, optional): must be `True` if supplied gas
+            formation volume factor is in :math:`ft^3/scf` or `False` if it'
+            in :math:`bbl/scf`. Defaults to True.
+
+    Returns:
+        The gas density in :math:`lbm/ft^3`.
+    """
+    conversion_factor = 0.0764
+    if not _bg_in_cubic_feet:
+        conversion_factor = 0.0764 / 5.614
+
+    density = (conversion_factor * _gas_specific_gravity /
+               _gas_formation_volume_factor)
+    return density
