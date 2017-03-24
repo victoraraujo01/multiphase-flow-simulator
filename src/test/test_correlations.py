@@ -198,3 +198,19 @@ class TestCorrelations(object):
             answers.append(answer)
         assert answers == pytest.approx(expected_answers)
 
+    def test_gas_formation_volume_factor(self):
+        answers = []
+        expected_answers = [
+            0.217716165147761, 0.16219587571978, 0.0789582215069893,
+            0.0268882693610031, 0.00223551437955921, 0.000329420752706747,
+            0.000519678606823437
+        ]
+        for pressure in self.pressures:
+            answer = correlations.gas_formation_volume_factor(
+                pressure,
+                self.temperature,
+                self.gas_specific_gravity,
+                False
+            )
+            answers.append(answer)
+        assert answers == pytest.approx(expected_answers)
