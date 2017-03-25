@@ -100,9 +100,10 @@ def gas_density(_gas_specific_gravity,
     Returns:
         The gas density in :math:`lbm/ft^3`.
     """
-    conversion_factor = 0.0764
+    # conversion_factor = 14.7 * 28.97 / (10.7316 * 520)
+    conversion_factor = 0.0764106
     if not _bg_in_cubic_feet:
-        conversion_factor = 0.0764 / 5.614
+        conversion_factor = conversion_factor / 5.614
 
     density = (conversion_factor * _gas_specific_gravity /
                _gas_formation_volume_factor)
@@ -147,10 +148,13 @@ def live_oil_density(_oil_specific_gravity,
     Returns:
         The live oil density in :math:`lbm/ft^3`.
     """
-    density = ((350 * _oil_specific_gravity +
-                0.0764 * _gas_specific_gravity * _gas_solubility_in_oil *
-                (1 - _water_cut)) /
-               5.615 * _oil_formation_volume_factor)
+    density = ((
+        350 * _oil_specific_gravity +
+        0.0764 * _gas_specific_gravity * _gas_solubility_in_oil *
+        (1 - _water_cut)
+    ) / (
+        5.615 * _oil_formation_volume_factor
+    ))
     return density
 
 
@@ -174,10 +178,15 @@ def live_water_density(_water_specific_gravity,
     Returns:
         The live water density in :math:`lbm/ft^3`.
     """
-    density = ((350 * _water_specific_gravity +
-                0.0764 * _gas_specific_gravity * _gas_solubility_in_water *
-                _water_cut) /
-               5.615 * _water_formation_volume_factor)
+    density = (
+        (
+            350 * _water_specific_gravity +
+            0.0764 * _gas_specific_gravity * _gas_solubility_in_water *
+            _water_cut
+        ) / (
+            5.615 * _water_formation_volume_factor
+        )
+    )
     return density
 
 
