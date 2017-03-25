@@ -410,3 +410,28 @@ def live_oil_viscosity(_pressure,
         )
 
     return _live_oil_viscosity
+
+
+def gas_viscosity(_temperature, _gas_specific_gravity, _gas_density):
+    """
+    Calculates the gas viscosity using the Lee et al. correlation.
+
+    Args:
+        _temperature (double): Temperature (fahrenheit degrees).
+        _gas_specific_gravity (double): Gas' specific gravity (doesn't have an
+            unit).
+
+    Returns:
+        The gas oil viscosity in :math:`cp`.
+    """
+    molecular_weight = 28.97 * _gas_specific_gravity
+    x_exponent = 3.5 + 986 / (_temperature + 460) + 0.01 * molecular_weight
+    y_exponent = 2.4 - 0.2 * x_exponent
+    _gas_viscosity = (
+        (9.4 + 0.02 * molecular_weight) * ((_temperature + 460.) ** 1.5) /
+        (209. + 19. * molecular_weight + _temperature + 460) *
+        10 ** (-4) * math.exp(
+            x_exponent * (_gas_density / 62.4) ** y_exponent
+        )
+    )
+    return _gas_viscosity
