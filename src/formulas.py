@@ -27,13 +27,13 @@ def production_gas_liquid_ratio(_production_gas_oil_ratio, _water_cut):
     same unit as the gas liquid ratio.
 
     Args:
-        _production_gas_oil_ratio: Production gas oil ratio, RGO (suggested
-                                  unit: scf/stb).
+        _production_gas_oil_ratio: Production gas oil ratio, :math:`RGO` (
+            suggested unit: :math:`scf/stb`).
         _water_cut: Water cut.
 
     Returns:
-        The production gas liquid ratio, RGL (in the same unit as the supplied
-        RGO).
+        The production gas liquid ratio, :math:`RGL` (in the same unit as the
+        supplied :math:`RGO`).
     """
     return _production_gas_oil_ratio * (1 - _water_cut)
 
@@ -48,18 +48,22 @@ def free_gas_liquid_ratio(_pressure,
     Calculates the free gas liquid ratio.
 
     Args:
-        _pressure: Pressure at which the gas is (psig). Note that this value is
-                   in psig, so it is relative to the atmospheric pressure.
-        _bubble_point: Mixture's bubble point (psig).  Note that this value is
-                       in psig, so it is relative to the atmospheric pressure.
-        _gas_solubility_in_oil: Gas solubility in oil, Rso (in the same unit
-                                as GLR_p and Rsw, suggestion: scf/stb).
-        _gas_solubility_in_water: Gas solubility in water, Rsw (in the same
-                                  unit as GLR_p and Rso, suggestion: scf/stb).
+        _pressure: Pressure at which the gas is (:math:`psig`). Note that this
+            value is in :math:`psig`, so it is relative to the atmospheric
+            pressure.
+        _bubble_point: Mixture's bubble point (:math:`psig`). Note that this
+            value is in :math:`psig`, so it is relative to the atmospheric
+            pressure.
+        _gas_solubility_in_oil: Gas solubility in oil, :math:`R_{so}` (in the
+            same unit as :math:`GLR_p` and :math:`R_{sw}`, suggestion:
+            :math:`scf/stb`).
+        _gas_solubility_in_water: Gas solubility in water, :math:`R_{sw}` (in
+            the same unit as :math:`GLR_p` and :math:`R_{so}`, suggestion:
+            :math:`scf/stb`).
         _water_cut: Water cut, WC.
-        _production_gas_liquid_ratio: Production gas liquid ratio, GLR_p (in
-                                      the same unit as Rso and Rsw, suggestion:
-                                      scf/stb).
+        _production_gas_liquid_ratio: Production gas liquid ratio,
+            :math:`GLR_p` (in the same unit as :math:`R_{so}` and
+            :math:`R_{sw}`, suggestion: :math:`scf/stb`).
 
     Returns:
         The free gas liquid ratio if pressure is below bubble point. Otherwise,
@@ -85,17 +89,17 @@ def gas_density(_gas_specific_gravity,
                 _bg_in_cubic_feet=True):
     """
     Calculates the gas density at standard conditions (if no gas formation
-    volume factor, Bg, is given) or uses the given Bg to calculate it at
-    different conditions.
+    volume factor, :math:`B_g`, is given) or uses the given :math:`B_g` to
+    calculate it at different conditions.
 
     Args:
         _gas_specific_gravity (double):  Gas' specific gravity (no unit)
         _gas_formation_volume_factor (double, optional): Gas' formation volume
-            factor (:math:`ft^3/scf` or :math:`bbl/scf` - use argument
-            bg_in_cubic_feet accordingly).
-        _in_cubic_feet (boolean, optional): must be `True` if supplied gas
-            formation volume factor is in :math:`ft^3/scf` or `False` if it's
-            in :math:`bbl/scf`. Defaults to True.
+            factor :math:`B_g` (:math:`ft^3/scf` or :math:`bbl/scf` - use
+            argument ``bg_in_cubic_feet`` accordingly).
+        _in_cubic_feet (boolean, optional): must be ``True`` if supplied gas
+            formation volume factor is in :math:`ft^3/scf` or ``False`` if it's
+            in :math:`bbl/scf`. Defaults to ``True``.
 
     Returns:
         The gas density in :math:`lbm/ft^3`.
@@ -116,9 +120,9 @@ def dead_oil_density(_oil_specific_gravity, _in_cubic_feet=False):
 
     Args:
         _oil_specific_gravity (double): Oil's specific gravity (no unit).
-        _in_cubic_feet (boolean, optional): if `True` density will be in
+        _in_cubic_feet (boolean, optional): if ``True`` density will be in
             :math:`lbm/scf`. Otherwise it will be in :math:`lbm/stb`. Defaults
-            to `False`.
+            to ``False``.
     Returns:
         The oil density in :math:`lbm/scf` or :math:`lbm/stb`.
     """
@@ -139,10 +143,10 @@ def live_oil_density(_oil_specific_gravity,
     Args:
         _oil_specific_gravity (double): Oil's specific gravity (no unit).
         _gas_specific_gravity (double): Gas' specific gravity (no unit).
-        _gas_solubility_in_oil (double): Gas solubility in oil, Rso
+        _gas_solubility_in_oil (double): Gas solubility in oil, :math:`R_{so}`
             (:math:`scf/stb`).
-        _oil_formation_volume_factor (double): Oil formation volume factor, Bo
-            (:math:`bbl/stb`)
+        _oil_formation_volume_factor (double): Oil formation volume factor,
+            :math:`B_o` (:math:`bbl/stb`)
         _water_cut: Water cut, WC.
 
     Returns:
@@ -169,10 +173,10 @@ def live_water_density(_water_specific_gravity,
     Args:
         _water_specific_gravity (double): Water's specific gravity (no unit).
         _gas_specific_gravity (double): Gas' specific gravity (no unit).
-        _gas_solubility_in_water (double): Gas solubility in water, Rsw
-            (:math:`scf/stb`).
-        _water_formation_volume_factor (double): Oil formation volume factor,
-            Bw (:math:`bbl/stb`)
+        _gas_solubility_in_water (double): Gas solubility in water,
+            :math:`R_{sw}` (:math:`scf/stb`).
+        _water_formation_volume_factor (double): Water formation volume factor,
+            :math:`B_w` (:math:`bbl/stb`)
         _water_cut: Water cut, WC.
 
     Returns:
@@ -197,9 +201,9 @@ def in_situ_oil_flow_rate(_liquid_flow_rate,
     Calculates the in-situ oil flow rate at the given conditions
 
     Args:
-        _liquid_flow_rate (double): Total liquid flow rate (bpd).
-        _oil_formation_volume_factor (double): Oil formation volume factor, Bo
-            (:math:`bbl/stb`).
+        _liquid_flow_rate (double): Total liquid flow rate (:math:`bpd`).
+        _oil_formation_volume_factor (double): Oil formation volume factor,
+            :math:`B_o` (:math:`bbl/stb`).
         _water_cut: Water cut, WC.
 
     Returns:
@@ -218,9 +222,9 @@ def in_situ_water_flow_rate(_liquid_flow_rate,
     Calculates the in-situ water flow rate at the given conditions
 
     Args:
-        _liquid_flow_rate (double): Total liquid flow rate (bpd).
+        _liquid_flow_rate (double): Total liquid flow rate (:math:`bpd`).
         _water_formation_volume_factor (double): Water formation volume factor,
-            Bw (:math:`bbl/stb`).
+            :math:`B_w` (:math:`bbl/stb`).
         _water_cut: Water cut, WC.
 
     Returns:
@@ -239,13 +243,14 @@ def in_situ_gas_flow_rate(_liquid_flow_rate,
     Calculates the in-situ gas flow rate at the given conditions
 
     Args:
-        _liquid_flow_rate (double): Total liquid flow rate (bpd).
+        _liquid_flow_rate (double): Total liquid flow rate (:math:`bpd`).
         _gas_formation_volume_factor (double): Gas formation volume factor,
-            Bg (:math:`bbl/scf`).
-        _water_cut: Water cut, WC.
+            :math:`B_g` (:math:`bbl/scf`). Pay attention to the unit used.
+        _free_gas_liquid_ratio (double): The free gas liquid ratio
+            (:math:`scf/stb`).
 
     Returns:
-        The in-situ oil flow rate in :math:`ft^3/s`.
+        The in-situ gas flow rate in :math:`ft^3/s`.
     """
     flow_rate = (_free_gas_liquid_ratio *
                  _liquid_flow_rate * _gas_formation_volume_factor *
@@ -259,7 +264,7 @@ def superficial_velocity(_in_situ_flow_rate, _diameter):
     given diameter.
 
     Args:
-        _in_situ_flow_rate (double): Total liquid flow rate (:math:`ft^3/s`).
+        _in_situ_flow_rate (double): In situ flow rate (:math:`ft^3/s`).
         _diameter (double): The tubing diameter (:math:`in`).
 
     Returns:
