@@ -214,3 +214,36 @@ class TestCorrelations(object):
             )
             answers.append(answer)
         assert answers == pytest.approx(expected_answers)
+
+    def test_dead_oil_viscosity(self):
+        expected_answer = 5.7287743853257
+        answer = correlations.dead_oil_viscosity(
+            self.temperature,
+            self.oil_api_gravity,
+        )
+        assert answer == pytest.approx(expected_answer)
+
+    def test_oil_viscosity(self):
+        answers = []
+        expected_answers = [
+            5.59927133208733, 5.57988842602591, 5.49767846161432,
+            5.26037907452966, 6.45257947952086, 82.6292113951839,
+            104.890675713315
+        ]
+        for pressure in self.pressures:
+            gas_solubility_in_oil = correlations.gas_solubility_in_oil(
+                pressure,
+                self.bubble_point,
+                self.temperature,
+                self.gas_specific_gravity,
+                self.oil_api_gravity
+            )
+            answer = correlations.live_oil_viscosity(
+                pressure,
+                self.bubble_point,
+                self.temperature,
+                gas_solubility_in_oil,
+                self.oil_api_gravity
+            )
+            answers.append(answer)
+        assert answers == pytest.approx(expected_answers)
