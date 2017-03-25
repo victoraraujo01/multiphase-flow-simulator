@@ -145,6 +145,15 @@ def expected_answers():
         0.0629713499770325, 0.0444347536529818, 0.0164174587898616,
         0.0, 0.0, 0.0, 0.0
     ]
+    answers["expected_vso"] = [
+        1.89302804810466, 1.89328102980193, 1.89437524349607,
+        1.89453148982855, 1.87778867002612, 1.87587046524483,
+        1.87582897392764
+    ]
+    answers["expected_vsg"] = [
+        2.90088033832969, 2.04696109036049, 0.756297640533635,
+        0.0, 0.0, 0.0, 0.0
+    ]
     return answers
 
 
@@ -248,3 +257,39 @@ def test_in_situ_gas_flow_rate(input, expected_answers, correlation_results):
         )
         answers.append(answer)
     assert answers == pytest.approx(expected)
+
+
+def test_superficial_velocity(input, expected_answers, correlation_results):
+    gas_velocity = []
+    oil_velocity = []
+    expected_gas = expected_answers["expected_vsg"]
+    expected_oil = expected_answers["expected_vso"]
+    for (i, pressure) in enumerate(input["pressures"]):
+        gas_solubility_in_oil = correlation_results["rso"][i]
+        gas_solubility_in_water = correlation_results["rsw"][i]
+        gas_form_volume_factor_bbl = correlation_results["bg_bbl"][i]
+        free_gas_liquid_ratio = formulas.free_gas_liquid_ratio(
+            pressure,
+            input["bubble_point"],
+            gas_solubility_in_oil,
+            gas_solubility_in_water,
+            input["water_cut"],
+            input["production_gas_liquid_ratio"]
+        )
+        gas_flow_rate = formulas.in_situ_gas_flow_rate(
+            input["liquid_flow_rate"],
+            gas_form_volume_factor_bbl,
+            free_gas_liquid_ratio
+        )
+        oil_form_volume_factor = correlation_results["bo"][i]
+        oil_flow_rate = formulas.in_situ_oil_flow_rate(
+            input["liquid_flow_rate"],
+            oil_form_volume_factor,
+            input["water_cut"]
+        )
+        gas_velocity.append(formulas.superficial_velocity(
+            gas_flow_rate, input["diameter"]))
+        oil_velocity.append(formulas.superficial_velocity(
+            oil_flow_rate, input["diameter"]))
+    assert (gas_velocity == pytest.approx(expected_gas) and
+            oil_velocity == pytest.approx(expected_oil))
