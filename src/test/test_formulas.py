@@ -40,6 +40,7 @@ def correlation_results(input):
     results["rsw"] = []
     results["rso"] = []
     results["bg"] = []
+    results["bg_bbl"] = []
     results["co"] = []
     results["bo"] = []
     results["cw"] = []
@@ -62,6 +63,12 @@ def correlation_results(input):
             input["temperature"],
             input["gas_specific_gravity"],
             True
+        )
+        gas_form_volume_factor_bbl = correlations.gas_formation_volume_factor(
+            pressure,
+            input["temperature"],
+            input["gas_specific_gravity"],
+            False
         )
         oil_compressibility = 0.
         water_compressibility = 0
@@ -98,6 +105,7 @@ def correlation_results(input):
         results["rsw"].append(gas_solubility_in_water)
         results["rso"].append(gas_solubility_in_oil)
         results["bg"].append(gas_form_volume_factor)
+        results["bg_bbl"].append(gas_form_volume_factor_bbl)
         results["co"].append(oil_compressibility)
         results["bo"].append(oil_form_volume_factor)
         results["cw"].append(water_compressibility)
@@ -132,6 +140,10 @@ def expected_answers():
         0.0410932261349932, 0.0410987177779217, 0.0411224706065278,
         0.0411258623501842, 0.0407624147610332, 0.0407207750067095,
         0.0407198743269328
+    ]
+    answers["expected_qg"] = [
+        0.0629713499770325, 0.0444347536529818, 0.0164174587898616,
+        0.0, 0.0, 0.0, 0.0
     ]
     return answers
 
@@ -209,6 +221,30 @@ def test_in_situ_oil_flow_rate(input, expected_answers, correlation_results):
             input["liquid_flow_rate"],
             oil_form_volume_factor,
             input["water_cut"]
+        )
+        answers.append(answer)
+    assert answers == pytest.approx(expected)
+
+
+def test_in_situ_gas_flow_rate(input, expected_answers, correlation_results):
+    answers = []
+    expected = expected_answers["expected_qg"]
+    for (i, pressure) in enumerate(input["pressures"]):
+        gas_solubility_in_oil = correlation_results["rso"][i]
+        gas_solubility_in_water = correlation_results["rsw"][i]
+        gas_form_volume_factor_bbl = correlation_results["bg_bbl"][i]
+        free_gas_liquid_ratio = formulas.free_gas_liquid_ratio(
+            pressure,
+            input["bubble_point"],
+            gas_solubility_in_oil,
+            gas_solubility_in_water,
+            input["water_cut"],
+            input["production_gas_liquid_ratio"]
+        )
+        answer = formulas.in_situ_gas_flow_rate(
+            input["liquid_flow_rate"],
+            gas_form_volume_factor_bbl,
+            free_gas_liquid_ratio
         )
         answers.append(answer)
     assert answers == pytest.approx(expected)
