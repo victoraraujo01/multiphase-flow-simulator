@@ -329,7 +329,7 @@ def gas_formation_volume_factor(_pressure,
             :math:`ft^3/scf`. If set to ``false``, result will be in
             :math:`bbl/scf`.
     Returns:
-        The gas deviation factor.
+        The gas formation volume factor.
     """
     _gas_deviation_factor = gas_deviation_factor(_pressure,
                                                  _temperature,
