@@ -107,7 +107,7 @@ def gas_density(_gas_specific_gravity,
     # conversion_factor = 14.7 * 28.97 / (10.7316 * 520)
     conversion_factor = 0.0764106
     if not _bg_in_cubic_feet:
-        conversion_factor = conversion_factor / 5.614
+        conversion_factor = conversion_factor / 5.614583333
 
     density = (conversion_factor * _gas_specific_gravity /
                _gas_formation_volume_factor)

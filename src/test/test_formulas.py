@@ -176,15 +176,23 @@ def test_free_gas_liquid_ratio(input, expected_answers, correlation_results):
 
 
 def test_gas_density(input, expected_answers, correlation_results):
-    answers = []
+    answers_from_bbl = []
+    answers_from_ft = []
     expected = expected_answers["expected_rho_gas"]
     for (i, _) in enumerate(input["pressures"]):
-        gas_form_volume_factor = correlation_results["bg"][i]
-        answer = formulas.gas_density(
+        gas_form_volume_factor_ft = correlation_results["bg"][i]
+        gas_form_volume_factor_bbl = correlation_results["bg_bbl"][i]
+        answer_from_ft = formulas.gas_density(
             input["gas_specific_gravity"],
-            gas_form_volume_factor)
-        answers.append(answer)
-    assert answers == pytest.approx(expected)
+            gas_form_volume_factor_ft)
+        answer_from_bbl = formulas.gas_density(
+            input["gas_specific_gravity"],
+            gas_form_volume_factor_bbl,
+            False)
+        answers_from_ft.append(answer_from_ft)
+        answers_from_bbl.append(answer_from_bbl)
+    assert (answers_from_ft == pytest.approx(expected) and
+            answers_from_bbl == pytest.approx(expected))
 
 
 def test_live_oil_density(input, expected_answers, correlation_results):
