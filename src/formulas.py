@@ -344,3 +344,27 @@ def water_fraction(_oil_velocity, _water_velocity):
     """
     total_velocity = _oil_velocity + _water_velocity
     return _water_velocity / total_velocity
+
+
+def mixture_froude_number(_mixture_velocity, _diameter):
+    """
+    Calculates the mixture Froude number based on the mixture velocity (sum of
+    all phases respective superficial velocities) and the tubing diameter.
+
+    Args:
+        _mixture_velocity (double): Superficial mixture velocity (:math:`ft/s`)
+        _diameter (double): Tubing diameter (:math:`in`).
+
+    Returns:
+        THe Froude number.
+    """
+    return 0.37267 * (_mixture_velocity ** 2) / _diameter
+
+
+def transition_froude_numbers(_liquid_fraction):
+    return [
+        316.0 * _liquid_fraction ** 0.302,
+        0.0009252 * _liquid_fraction ** -2.4684,
+        0.1 * _liquid_fraction ** -1.4516,
+        0.5 * _liquid_fraction ** -6.738
+    ]
