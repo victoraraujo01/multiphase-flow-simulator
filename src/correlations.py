@@ -435,3 +435,26 @@ def gas_viscosity(_temperature, _gas_specific_gravity, _gas_density):
         )
     )
     return _gas_viscosity
+
+
+def water_viscosity(_pressure, _temperature):
+    """
+    Calculates the water viscosity using the Kestin, Khalifa and Correa
+    correlation.
+
+    Args:
+        _pressure (double): Pressure at which the oil is (:math:`psig`). Note
+            that this value is relative to the atmospheric pressure.
+        _temperature (double): Temperature (fahrenheit degrees).
+
+    Returns:
+        The water viscosity in :math:`cp`.
+    """
+
+    viscosity = (
+        109.574 * _temperature ** (-1.12166) * (
+            0.9994 + 4.0295e-5 * (_pressure + 14.7) +
+            3.1062e-9 * (_pressure + 14.7) ** 2
+        )
+    )
+    return viscosity

@@ -42,6 +42,7 @@ def correlation_results(input):
     results["z"] = []
     results["uo"] = []
     results["ug"] = []
+    results["uw"] = []
 
     for pressure in input["pressures"]:
         gas_solubility_in_water = correlations.gas_solubility_in_water(
@@ -86,6 +87,9 @@ def correlation_results(input):
         gas_viscosity = correlations.gas_viscosity(
             input["temperature"], input["gas_specific_gravity"], gas_density
         )
+        water_viscosity = correlations.water_viscosity(
+            pressure, input["temperature"]
+        )
         oil_compressibility = 0.
         water_compressibility = 0
         if pressure >= input["bubble_point"]:
@@ -129,6 +133,7 @@ def correlation_results(input):
         results["z"].append(gas_deviation_factor)
         results["uo"].append(live_oil_viscosity)
         results["ug"].append(gas_viscosity)
+        results["uw"].append(water_viscosity)
     return results
 
 
@@ -180,7 +185,13 @@ def expected_answers():
         0.0130747646161221, 0.0147783550021731, 0.0704594847727007,
         0.032399978006134
     ]
+    answers["uw"] = [
+        0.334024576050522, 0.334092052578831, 0.334369248728208,
+        0.335390812475144, 0.348560031401639, 0.57570480492809,
+        0.665379244980299
+    ]
     return answers
+
 
 def test_gas_solubility_in_oil(input, expected_answers, correlation_results):
     assert pytest.approx(expected_answers["rso"]) == correlation_results["rso"]
@@ -245,3 +256,6 @@ def test_oil_viscosity(input, expected_answers, correlation_results):
 
 def test_gas_viscosity(input, expected_answers, correlation_results):
     assert pytest.approx(expected_answers["ug"]) == correlation_results["ug"]
+
+def test_water_viscosity(input, expected_answers, correlation_results):
+    assert pytest.approx(expected_answers["uw"]) == correlation_results["uw"]
