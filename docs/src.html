@@ -311,7 +311,7 @@ unit).</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The gas oil viscosity in <span class="math">\(cp\)</span>.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The gas viscosity in <span class="math">\(cp\)</span>.</p>
 </td>
 </tr>
 </tbody>
@@ -506,6 +506,29 @@ matter if pressure is below bubble point.</li>
 </table>
 </dd></dl>
 
+<dl class="function">
+<dt id="src.correlations.water_viscosity">
+<code class="descclassname">src.correlations.</code><code class="descname">water_viscosity</code><span class="sig-paren">(</span><em>_pressure</em>, <em>_temperature</em><span class="sig-paren">)</span><a class="headerlink" href="#src.correlations.water_viscosity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the water viscosity using the Kestin, Khalifa and Correa
+correlation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>_pressure</strong> (<em>double</em>) &#8211; Pressure at which the oil is (<span class="math">\(psig\)</span>). Note
+that this value is relative to the atmospheric pressure.</li>
+<li><strong>_temperature</strong> (<em>double</em>) &#8211; Temperature (fahrenheit degrees).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The water viscosity in <span class="math">\(cp\)</span>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 <div class="section" id="module-src.formulas">
 <span id="src-formulas-module"></span><h2>src.formulas module<a class="headerlink" href="#module-src.formulas" title="Permalink to this headline">¶</a></h2>
@@ -598,6 +621,30 @@ in <span class="math">\(bbl/scf\)</span>. Defaults to <code class="docutils lite
 </dd></dl>
 
 <dl class="function">
+<dt id="src.formulas.gas_fraction">
+<code class="descclassname">src.formulas.</code><code class="descname">gas_fraction</code><span class="sig-paren">(</span><em>_oil_velocity</em>, <em>_gas_velocity</em>, <em>_water_velocity</em><span class="sig-paren">)</span><a class="headerlink" href="#src.formulas.gas_fraction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the gas fraction of the produced fluid based on the superficial
+velocity of each phase. Note that the suggested unit is <span class="math">\(ft/s\)</span>, but
+as long as all velocities are in the same unit, any unit can be used.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>_oil_velocity</strong> (<em>double</em>) &#8211; Superficial oil velocity (<span class="math">\(ft/s\)</span>).</li>
+<li><strong>_gas_velocity</strong> (<em>double</em>) &#8211; Superficial gas velocity (<span class="math">\(ft/s\)</span>).</li>
+<li><strong>_water_velocity</strong> (<em>double</em>) &#8211; Superficial water velocity (<span class="math">\(ft/s\)</span>).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">THe gas fraction.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
 <dt id="src.formulas.in_situ_gas_flow_rate">
 <code class="descclassname">src.formulas.</code><code class="descname">in_situ_gas_flow_rate</code><span class="sig-paren">(</span><em>_liquid_flow_rate</em>, <em>_gas_formation_volume_factor</em>, <em>_free_gas_liquid_ratio</em><span class="sig-paren">)</span><a class="headerlink" href="#src.formulas.in_situ_gas_flow_rate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates the in-situ gas flow rate at the given conditions</p>
@@ -668,6 +715,31 @@ in <span class="math">\(bbl/scf\)</span>. Defaults to <code class="docutils lite
 </dd></dl>
 
 <dl class="function">
+<dt id="src.formulas.liquid_fraction">
+<code class="descclassname">src.formulas.</code><code class="descname">liquid_fraction</code><span class="sig-paren">(</span><em>_oil_velocity</em>, <em>_gas_velocity</em>, <em>_water_velocity</em><span class="sig-paren">)</span><a class="headerlink" href="#src.formulas.liquid_fraction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the liquid fraction (oil + water) of the produced fluid based
+on the superficial velocity of each phase. Note that the suggested unit is
+<span class="math">\(ft/s\)</span>, but as long as all velocities are in the same unit, any unit
+can be used.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>_oil_velocity</strong> (<em>double</em>) &#8211; Superficial oil velocity (<span class="math">\(ft/s\)</span>).</li>
+<li><strong>_gas_velocity</strong> (<em>double</em>) &#8211; Superficial gas velocity (<span class="math">\(ft/s\)</span>).</li>
+<li><strong>_water_velocity</strong> (<em>double</em>) &#8211; Superficial water velocity (<span class="math">\(ft/s\)</span>).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">THe liquid (oil + water) fraction.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
 <dt id="src.formulas.live_oil_density">
 <code class="descclassname">src.formulas.</code><code class="descname">live_oil_density</code><span class="sig-paren">(</span><em>_oil_specific_gravity</em>, <em>_gas_specific_gravity</em>, <em>_gas_solubility_in_oil</em>, <em>_oil_formation_volume_factor</em>, <em>_water_cut</em><span class="sig-paren">)</span><a class="headerlink" href="#src.formulas.live_oil_density" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates the live oil density at the given conditions</p>
@@ -713,6 +785,52 @@ in <span class="math">\(bbl/scf\)</span>. Defaults to <code class="docutils lite
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The live water density in <span class="math">\(lbm/ft^3\)</span>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.formulas.mixture_froude_number">
+<code class="descclassname">src.formulas.</code><code class="descname">mixture_froude_number</code><span class="sig-paren">(</span><em>_mixture_velocity</em>, <em>_diameter</em><span class="sig-paren">)</span><a class="headerlink" href="#src.formulas.mixture_froude_number" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the mixture Froude number based on the mixture velocity (sum of
+all phases respective superficial velocities) and the tubing diameter.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>_mixture_velocity</strong> (<em>double</em>) &#8211; Superficial mixture velocity (<span class="math">\(ft/s\)</span>)</li>
+<li><strong>_diameter</strong> (<em>double</em>) &#8211; Tubing diameter (<span class="math">\(in\)</span>).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">THe Froude number.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.formulas.oil_fraction">
+<code class="descclassname">src.formulas.</code><code class="descname">oil_fraction</code><span class="sig-paren">(</span><em>_oil_velocity</em>, <em>_water_velocity</em><span class="sig-paren">)</span><a class="headerlink" href="#src.formulas.oil_fraction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the oil fraction of the produced fluid based on the superficial
+velocity of each <strong>liquid</strong> phase. Note that the suggested unit is
+<span class="math">\(ft/s\)</span>, but as long as all velocities are in the same unit, any unit
+can be used.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>_oil_velocity</strong> (<em>double</em>) &#8211; Superficial oil velocity (<span class="math">\(ft/s\)</span>).</li>
+<li><strong>_water_velocity</strong> (<em>double</em>) &#8211; Superficial water velocity (<span class="math">\(ft/s\)</span>).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">THe oil fraction.</p>
 </td>
 </tr>
 </tbody>
@@ -773,6 +891,11 @@ given diameter.</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="src.formulas.transition_froude_numbers">
+<code class="descclassname">src.formulas.</code><code class="descname">transition_froude_numbers</code><span class="sig-paren">(</span><em>_liquid_fraction</em><span class="sig-paren">)</span><a class="headerlink" href="#src.formulas.transition_froude_numbers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
 <dt id="src.formulas.water_cut">
 <code class="descclassname">src.formulas.</code><code class="descname">water_cut</code><span class="sig-paren">(</span><em>_oil_flow_rate</em>, <em>_water_flow_rate</em><span class="sig-paren">)</span><a class="headerlink" href="#src.formulas.water_cut" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates the water cut based on the passed oil and water flow rates.
@@ -788,6 +911,30 @@ Supplied oil and water rates must be in the same unit.</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">THe water cut ratio, known as WC or BSW (between 0 and 1).</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.formulas.water_fraction">
+<code class="descclassname">src.formulas.</code><code class="descname">water_fraction</code><span class="sig-paren">(</span><em>_oil_velocity</em>, <em>_water_velocity</em><span class="sig-paren">)</span><a class="headerlink" href="#src.formulas.water_fraction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the water fraction of the produced fluid based on the
+superficial velocity of each <strong>liquid</strong> phase. Note that the suggested unit
+is <span class="math">\(ft/s\)</span>, but as long as all velocities are in the same unit, any
+unit can be used.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>_oil_velocity</strong> (<em>double</em>) &#8211; Superficial oil velocity (<span class="math">\(ft/s\)</span>).</li>
+<li><strong>_water_velocity</strong> (<em>double</em>) &#8211; Superficial water velocity (<span class="math">\(ft/s\)</span>).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">THe oil fraction.</p>
 </td>
 </tr>
 </tbody>
