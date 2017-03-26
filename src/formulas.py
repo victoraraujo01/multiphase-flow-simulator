@@ -326,3 +326,21 @@ def oil_fraction(_oil_velocity, _water_velocity):
     """
     total_velocity = _oil_velocity + _water_velocity
     return _oil_velocity / total_velocity
+
+
+def water_fraction(_oil_velocity, _water_velocity):
+    """
+    Calculates the water fraction of the produced fluid based on the
+    superficial velocity of each **liquid** phase. Note that the suggested unit
+    is :math:`ft/s`, but as long as all velocities are in the same unit, any
+    unit can be used.
+
+    Args:
+        _oil_velocity (double): Superficial oil velocity (:math:`ft/s`).
+        _water_velocity (double): Superficial water velocity (:math:`ft/s`).
+
+    Returns:
+        THe oil fraction.
+    """
+    total_velocity = _oil_velocity + _water_velocity
+    return _water_velocity / total_velocity
