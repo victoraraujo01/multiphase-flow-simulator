@@ -1,0 +1,867 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>src package &mdash; Multiphase Flow Simulator 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Multiphase Flow Simulator 0.1 documentation" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Multiphase Flow Simulator
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">src package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-src.correlations">src.correlations module</a></li>
+<li><a class="reference internal" href="#module-src.formulas">src.formulas module</a></li>
+<li><a class="reference internal" href="#module-src">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Multiphase Flow Simulator</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>src package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/src.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="src-package">
+<h1>src package<a class="headerlink" href="#src-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-src.correlations">
+<span id="src-correlations-module"></span><h2>src.correlations module<a class="headerlink" href="#module-src.correlations" title="Permalink to this headline">¶</a></h2>
+<p>Correlations</p>
+<dl class="function">
+<dt id="src.correlations.dead_oil_viscosity">
+<code class="descclassname">src.correlations.</code><code class="descname">dead_oil_viscosity</code><span class="sig-paren">(</span><em>_temperature</em>, <em>_oil_api_gravity</em><span class="sig-paren">)</span><a class="headerlink" href="#src.correlations.dead_oil_viscosity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the dead oil viscosity using the Beggs and Robinson correlation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>_temperature</strong> (<em>double</em>) &#8211; Temperature (fahrenheit degrees).</li>
+<li><strong>_oil_api_gravity</strong> (<em>double</em>) &#8211; Oil&#8217;s API gravity (API degrees).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The dead oil viscosity in <span class="math">\(cp\)</span>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.correlations.gas_deviation_factor">
+<code class="descclassname">src.correlations.</code><code class="descname">gas_deviation_factor</code><span class="sig-paren">(</span><em>_pressure</em>, <em>_temperature</em>, <em>_gas_specific_gravity</em><span class="sig-paren">)</span><a class="headerlink" href="#src.correlations.gas_deviation_factor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the gas deviation factor or compressibility factor Z using Papay
+correlation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>_pressure</strong> &#8211; Pressure at which the gas is (psig). Note that this value is
+in psig, so it is relative to the atmospheric pressure.</li>
+<li><strong>_temperature</strong> &#8211; Temperature (fahrenheit degrees).</li>
+<li><strong>_gas_specific_gravity</strong> &#8211; Gas&#8217; specific gravity (doesn&#8217;t have an unit).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The gas deviation factor.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.correlations.gas_formation_volume_factor">
+<code class="descclassname">src.correlations.</code><code class="descname">gas_formation_volume_factor</code><span class="sig-paren">(</span><em>_pressure</em>, <em>_temperature</em>, <em>_gas_specific_gravity</em>, <em>_in_cubic_feet=True</em><span class="sig-paren">)</span><a class="headerlink" href="#src.correlations.gas_formation_volume_factor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the gas formation volume factor. This is a convenience method
+that uses the gas specific gravity to calculate the gas deviation factor
+under the supplied pressure and temperature and under standard conditions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>_pressure</strong> (<em>double</em>) &#8211; Pressure at which the gas is (psig). Note that this
+value is in psig, so it is relative to the atmospheric pressure.</li>
+<li><strong>_temperature</strong> (<em>double</em>) &#8211; Temperature (fahrenheit degrees).</li>
+<li><strong>_gas_specific_gravity</strong> (<em>double</em>) &#8211; Gas&#8217; specific gravity (doesn&#8217;t have an
+unit).</li>
+<li><strong>_in_cubic_feet</strong> (<em>boolean</em><em>, </em><em>optional</em>) &#8211; If <code class="docutils literal"><span class="pre">true</span></code>, result will be in
+<span class="math">\(ft^3/scf\)</span>. If set to <code class="docutils literal"><span class="pre">false</span></code>, result will be in
+<span class="math">\(bbl/scf\)</span>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The gas formation volume factor.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.correlations.gas_solubility_in_oil">
+<code class="descclassname">src.correlations.</code><code class="descname">gas_solubility_in_oil</code><span class="sig-paren">(</span><em>_pressure</em>, <em>_bubble_point</em>, <em>_temperature</em>, <em>_gas_specific_gravity</em>, <em>_oil_api_gravity</em><span class="sig-paren">)</span><a class="headerlink" href="#src.correlations.gas_solubility_in_oil" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates gas solubility in oil (Rso) using Standing correlation. If
+pressure is higher than the mixture&#8217;s bubble point, returns the Rso at
+bubble point.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>_gas_specific_gravity</strong> &#8211; Gas&#8217; specific gravity (doesn&#8217;t have an unit).</li>
+<li><strong>_pressure</strong> &#8211; Pressure at which the gas is (psig). Note that this value is
+in psig, so it is relative to the atmospheric pressure.</li>
+<li><strong>_bubble_point</strong> &#8211; Mixture&#8217;s bubble point (psig).  Note that this value is
+in psig, so it is relative to the atmospheric pressure.</li>
+<li><strong>_temperature</strong> &#8211; Temperature at which the gas is (fahrenheit degrees).</li>
+<li><strong>_oil_api_gravity</strong> &#8211; Oil&#8217;s API gravity (API degrees).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The gas solubility in oil, Rso (scf/stb).</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.correlations.gas_solubility_in_water">
+<code class="descclassname">src.correlations.</code><code class="descname">gas_solubility_in_water</code><span class="sig-paren">(</span><em>_pressure</em>, <em>_bubble_point</em>, <em>_temperature</em><span class="sig-paren">)</span><a class="headerlink" href="#src.correlations.gas_solubility_in_water" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates gas solubility in water (Rsw) using Culberson and Maketta
+correlation. If pressure is higher than the mixture&#8217;s bubble point, returns
+the Rso at bubble point.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>_pressure</strong> &#8211; Pressure at which the gas is (psig). Note that this value is
+in psig, so it is relative to the atmospheric pressure.</li>
+<li><strong>_bubble_point</strong> &#8211; Mixture&#8217;s bubble point (psig). Note that this value is
+in psig, so it is relative to the atmospheric pressure.</li>
+<li><strong>_temperature</strong> &#8211; Temperature at which the gas is (fahrenheit degrees).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The gas solubility in water, Rsw (scf/stb).</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.correlations.gas_viscosity">
+<code class="descclassname">src.correlations.</code><code class="descname">gas_viscosity</code><span class="sig-paren">(</span><em>_temperature</em>, <em>_gas_specific_gravity</em>, <em>_gas_density</em><span class="sig-paren">)</span><a class="headerlink" href="#src.correlations.gas_viscosity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the gas viscosity using the Lee et al. correlation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>_temperature</strong> (<em>double</em>) &#8211; Temperature (fahrenheit degrees).</li>
+<li><strong>_gas_specific_gravity</strong> (<em>double</em>) &#8211; Gas&#8217; specific gravity (doesn&#8217;t have an
+unit).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The gas oil viscosity in <span class="math">\(cp\)</span>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.correlations.live_oil_viscosity">
+<code class="descclassname">src.correlations.</code><code class="descname">live_oil_viscosity</code><span class="sig-paren">(</span><em>_pressure</em>, <em>_bubble_point</em>, <em>_temperature</em>, <em>_gas_solubility_in_oil</em>, <em>_oil_api_gravity</em><span class="sig-paren">)</span><a class="headerlink" href="#src.correlations.live_oil_viscosity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the live oil viscosity. If pressure is below bubble point, the
+Beggs and Robinson correlation will be used. Instead, if it is above bubble
+point, the Beggs and Velasquez correlation will be used.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>_pressure</strong> (<em>double</em>) &#8211; Pressure at which the oil is (<span class="math">\(psig\)</span>). Note
+that this value is relative to the atmospheric pressure.</li>
+<li><strong>_bubble_point</strong> (<em>double</em>) &#8211; Mixture&#8217;s bubble point (<span class="math">\(psig\)</span>). Note
+that this value is relative to the atmospheric pressure.</li>
+<li><strong>_temperature</strong> (<em>double</em>) &#8211; Temperature (fahrenheit degrees).</li>
+<li><strong>_gas_solubility_in_oil_</strong> (<em>double</em>) &#8211; Gas solubility in oil, <span class="math">\(R_{so}\)</span>
+(in <span class="math">\(scf/stb\)</span>). <strong>If pressure is above bubble point, the gas
+solubility in oil supplied must be the one at the bubble point
+(:math:`R_{sob}`)</strong>.</li>
+<li><strong>_oil_api_gravity</strong> (<em>double</em>) &#8211; Oil&#8217;s API gravity (API degrees).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The live oil viscosity in <span class="math">\(cp\)</span>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.correlations.mixture_bubble_point">
+<code class="descclassname">src.correlations.</code><code class="descname">mixture_bubble_point</code><span class="sig-paren">(</span><em>_temperature</em>, <em>_gas_specific_gravity</em>, <em>_oil_api_gravity</em>, <em>_water_cut</em>, <em>_production_gas_liquid_ratio</em><span class="sig-paren">)</span><a class="headerlink" href="#src.correlations.mixture_bubble_point" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the mixture&#8217;s bubble point based on the water cut and the
+prouction gas liquid ratio.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>_water_cut</strong> &#8211; Water cut, WC.</li>
+<li><strong>_production_gas_liquid_ratio</strong> &#8211; Production gas liquid ratio, GLR_p (in
+the same unit as Rso and Rsw, suggestion:
+scf/stb).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The mixture&#8217;s bubble point Pb (psi).</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.correlations.oil_compressibility">
+<code class="descclassname">src.correlations.</code><code class="descname">oil_compressibility</code><span class="sig-paren">(</span><em>_pressure</em>, <em>_bubble_point</em>, <em>_temperature</em>, <em>_gas_solubility_in_oil_at_bp</em>, <em>_gas_specific_gravity</em>, <em>_oil_api_gravity</em><span class="sig-paren">)</span><a class="headerlink" href="#src.correlations.oil_compressibility" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the isothermal oil compressibility using Vasquez correlation.
+This is the compressibility of the oil as a single-phase liquid with a
+certain amount of gas in solution. It is valid above the bubble point
+only (Vasquez-Beggs Correlation).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>_pressure</strong> &#8211; Pressure at which the oil is (psig). Note that this value is
+in psig, so it is relative to the atmospheric pressure, and
+must be above bubble point.</li>
+<li><strong>_bubble_point</strong> &#8211; Mixture&#8217;s bubble point (psig). Note that this value is
+in psig, so it is relative to the atmospheric pressure.</li>
+<li><strong>_temperature</strong> &#8211; Temperature (fahrenheit degrees).</li>
+<li><strong>_gas_solubility_in_oil_at_bp</strong> &#8211; Gas solubility in oil at bubble point,
+Rsob (in scf/stb).</li>
+<li><strong>_gas_specific_gravity</strong> &#8211; Gas&#8217; specific gravity (doesn&#8217;t have an unit).</li>
+<li><strong>_oil_api_gravity</strong> &#8211; Oil&#8217;s API gravity (API degrees).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The compressibility of the oil as a single-phase liquid with a certain
+amount of gas in solution in psi-1.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.correlations.oil_formation_volume_factor">
+<code class="descclassname">src.correlations.</code><code class="descname">oil_formation_volume_factor</code><span class="sig-paren">(</span><em>_pressure</em>, <em>_bubble_point</em>, <em>_temperature</em>, <em>_gas_solubility_in_oil</em>, <em>_gas_specific_gravity</em>, <em>_oil_specific_gravity</em>, <em>_oil_compressibility=0.0</em><span class="sig-paren">)</span><a class="headerlink" href="#src.correlations.oil_formation_volume_factor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the oil formation volume factor (<span class="math">\(B_o\)</span>) using Standing&#8217;s
+correlation. The bubble point is necessary because a different correlation
+must be used below and above it. Also, it is important to remember that if
+pressure is above bubble point, the gas solubility in oil supplied must be
+the one at the bubble point (<span class="math">\(R_{sob}\)</span>). Finally, the oil
+compressibility (<span class="math">\(c_o\)</span>) is only needed if pressure is above bubble
+point.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>_pressure</strong> (<em>double</em>) &#8211; Pressure at which the oil is (<span class="math">\(psig\)</span>). Note
+that this value is relative to the atmospheric pressure.</li>
+<li><strong>_bubble_point</strong> (<em>double</em>) &#8211; Mixture&#8217;s bubble point (<span class="math">\(psig\)</span>). Note
+that this value is relative to the atmospheric pressure.</li>
+<li><strong>_temperature</strong> (<em>double</em>) &#8211; Temperature (fahrenheit degrees).</li>
+<li><strong>_gas_solubility_in_oil_</strong> (<em>double</em>) &#8211; Gas solubility in oil, <span class="math">\(R_{so}\)</span>
+(in <span class="math">\(scf/stb\)</span>). <strong>If pressure is above bubble point, the gas
+solubility in oil supplied must be the one at the bubble point
+(:math:`R_{sob}`).</strong></li>
+<li><strong>_gas_specific_gravity</strong> (<em>double</em>) &#8211; Gas&#8217; specific gravity (no unit).</li>
+<li><strong>_oil_specific_gravity</strong> (<em>double</em>) &#8211; Oil&#8217;s specific gravity (no unit).</li>
+<li><strong>_oil_api_gravity</strong> (<em>double</em>) &#8211; Oil&#8217;s API gravity (API degrees).</li>
+<li><strong>_oil_compressibility</strong> (<em>double</em><em>, </em><em>optional</em>) &#8211; Oil&#8217;s compressibility
+(<span class="math">\(psi^{-1}\)</span>). Value can be omitted if pressure is below
+bubble point.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The oil formation volume factor, in <span class="math">\(bbl/stb\)</span>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.correlations.water_compressibility">
+<code class="descclassname">src.correlations.</code><code class="descname">water_compressibility</code><span class="sig-paren">(</span><em>_pressure</em>, <em>_bubble_point</em>, <em>_temperature</em>, <em>_gas_solubility_in_water_at_bp</em><span class="sig-paren">)</span><a class="headerlink" href="#src.correlations.water_compressibility" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the isothermal water compressibility using Dodson and Standing
+correlation. This is the compressibility of the water as a single-phase
+liquid with a certain amount of gas in solution. It is valid above the
+bubble point only.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>_pressure</strong> &#8211; Pressure at which the water is (psig). Note that this value
+is in psig, so it is relative to the atmospheric pressure,
+and must be above bubble point.</li>
+<li><strong>_bubble_point</strong> &#8211; Mixture&#8217;s bubble point (psig). Note that this value is
+in psig, so it is relative to the atmospheric pressure.</li>
+<li><strong>_temperature</strong> &#8211; Temperature (fahrenheit degrees).</li>
+<li><strong>_gas_solubility_in_water_at_bp</strong> &#8211; Gas solubility in water at bubble point
+Rswb (in scf/stb).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The compressibility of the water as a single-phase liquid with a
+certain amount of gas in solution in psi-1.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.correlations.water_formation_volume_factor">
+<code class="descclassname">src.correlations.</code><code class="descname">water_formation_volume_factor</code><span class="sig-paren">(</span><em>_pressure</em>, <em>_bubble_point</em>, <em>_temperature</em>, <em>_water_compressibility</em><span class="sig-paren">)</span><a class="headerlink" href="#src.correlations.water_formation_volume_factor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the water formation volume factor (B_w) using Gould&#8217;s
+correlation. The bubble point is necessary because a different correlation
+must be used below and above it and the water compressibility (c_w)
+is only needed if pressure is above bubble point.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>_pressure</strong> &#8211; Pressure at which the oil is (psig). Note that this value is
+in psig, so it is relative to the atmospheric pressure.</li>
+<li><strong>_bubble_point</strong> &#8211; Mixture&#8217;s bubble point (psig). Note that this value is
+in psig, so it is relative to the atmospheric pressure.</li>
+<li><strong>_temperature</strong> &#8211; Temperature (fahrenheit degrees).</li>
+<li><strong>_water_compressibility</strong> &#8211; Waters compressibility (psi-1). Value doesn&#8217;t
+matter if pressure is below bubble point.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The water formation volume factor, in bbl/stb.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.formulas">
+<span id="src-formulas-module"></span><h2>src.formulas module<a class="headerlink" href="#module-src.formulas" title="Permalink to this headline">¶</a></h2>
+<p>Formulas</p>
+<dl class="function">
+<dt id="src.formulas.dead_oil_density">
+<code class="descclassname">src.formulas.</code><code class="descname">dead_oil_density</code><span class="sig-paren">(</span><em>_oil_specific_gravity</em>, <em>_in_cubic_feet=False</em><span class="sig-paren">)</span><a class="headerlink" href="#src.formulas.dead_oil_density" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the dead oil density at standard conditions</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>_oil_specific_gravity</strong> (<em>double</em>) &#8211; Oil&#8217;s specific gravity (no unit).</li>
+<li><strong>_in_cubic_feet</strong> (<em>boolean</em><em>, </em><em>optional</em>) &#8211; if <code class="docutils literal"><span class="pre">True</span></code> density will be in
+<span class="math">\(lbm/scf\)</span>. Otherwise it will be in <span class="math">\(lbm/stb\)</span>. Defaults
+to <code class="docutils literal"><span class="pre">False</span></code>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The oil density in <span class="math">\(lbm/scf\)</span> or <span class="math">\(lbm/stb\)</span>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.formulas.free_gas_liquid_ratio">
+<code class="descclassname">src.formulas.</code><code class="descname">free_gas_liquid_ratio</code><span class="sig-paren">(</span><em>_pressure</em>, <em>_bubble_point</em>, <em>_gas_solubility_in_oil</em>, <em>_gas_solubility_in_water</em>, <em>_water_cut</em>, <em>_production_gas_liquid_ratio</em><span class="sig-paren">)</span><a class="headerlink" href="#src.formulas.free_gas_liquid_ratio" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the free gas liquid ratio.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>_pressure</strong> &#8211; Pressure at which the gas is (<span class="math">\(psig\)</span>). Note that this
+value is in <span class="math">\(psig\)</span>, so it is relative to the atmospheric
+pressure.</li>
+<li><strong>_bubble_point</strong> &#8211; Mixture&#8217;s bubble point (<span class="math">\(psig\)</span>). Note that this
+value is in <span class="math">\(psig\)</span>, so it is relative to the atmospheric
+pressure.</li>
+<li><strong>_gas_solubility_in_oil</strong> &#8211; Gas solubility in oil, <span class="math">\(R_{so}\)</span> (in the
+same unit as <span class="math">\(GLR_p\)</span> and <span class="math">\(R_{sw}\)</span>, suggestion:
+<span class="math">\(scf/stb\)</span>).</li>
+<li><strong>_gas_solubility_in_water</strong> &#8211; Gas solubility in water, <span class="math">\(R_{sw}\)</span> (in
+the same unit as <span class="math">\(GLR_p\)</span> and <span class="math">\(R_{so}\)</span>, suggestion:
+<span class="math">\(scf/stb\)</span>).</li>
+<li><strong>_water_cut</strong> &#8211; Water cut, WC.</li>
+<li><strong>_production_gas_liquid_ratio</strong> &#8211; Production gas liquid ratio,
+<span class="math">\(GLR_p\)</span> (in the same unit as <span class="math">\(R_{so}\)</span> and
+<span class="math">\(R_{sw}\)</span>, suggestion: <span class="math">\(scf/stb\)</span>).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The free gas liquid ratio if pressure is below bubble point. Otherwise,
+returns zero.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.formulas.gas_density">
+<code class="descclassname">src.formulas.</code><code class="descname">gas_density</code><span class="sig-paren">(</span><em>_gas_specific_gravity</em>, <em>_gas_formation_volume_factor=1.0</em>, <em>_bg_in_cubic_feet=True</em><span class="sig-paren">)</span><a class="headerlink" href="#src.formulas.gas_density" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the gas density at standard conditions (if no gas formation
+volume factor, <span class="math">\(B_g\)</span>, is given) or uses the given <span class="math">\(B_g\)</span> to
+calculate it at different conditions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>_gas_specific_gravity</strong> (<em>double</em>) &#8211; Gas&#8217; specific gravity (no unit)</li>
+<li><strong>_gas_formation_volume_factor</strong> (<em>double</em><em>, </em><em>optional</em>) &#8211; Gas&#8217; formation volume
+factor <span class="math">\(B_g\)</span> (<span class="math">\(ft^3/scf\)</span> or <span class="math">\(bbl/scf\)</span> - use
+argument <code class="docutils literal"><span class="pre">bg_in_cubic_feet</span></code> accordingly).</li>
+<li><strong>_in_cubic_feet</strong> (<em>boolean</em><em>, </em><em>optional</em>) &#8211; must be <code class="docutils literal"><span class="pre">True</span></code> if supplied gas
+formation volume factor is in <span class="math">\(ft^3/scf\)</span> or <code class="docutils literal"><span class="pre">False</span></code> if it&#8217;s
+in <span class="math">\(bbl/scf\)</span>. Defaults to <code class="docutils literal"><span class="pre">True</span></code>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The gas density in <span class="math">\(lbm/ft^3\)</span>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.formulas.in_situ_gas_flow_rate">
+<code class="descclassname">src.formulas.</code><code class="descname">in_situ_gas_flow_rate</code><span class="sig-paren">(</span><em>_liquid_flow_rate</em>, <em>_gas_formation_volume_factor</em>, <em>_free_gas_liquid_ratio</em><span class="sig-paren">)</span><a class="headerlink" href="#src.formulas.in_situ_gas_flow_rate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the in-situ gas flow rate at the given conditions</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>_liquid_flow_rate</strong> (<em>double</em>) &#8211; Total liquid flow rate (<span class="math">\(bpd\)</span>).</li>
+<li><strong>_gas_formation_volume_factor</strong> (<em>double</em>) &#8211; Gas formation volume factor,
+<span class="math">\(B_g\)</span> (<span class="math">\(bbl/scf\)</span>). Pay attention to the unit used.</li>
+<li><strong>_free_gas_liquid_ratio</strong> (<em>double</em>) &#8211; The free gas liquid ratio
+(<span class="math">\(scf/stb\)</span>).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The in-situ gas flow rate in <span class="math">\(ft^3/s\)</span>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.formulas.in_situ_oil_flow_rate">
+<code class="descclassname">src.formulas.</code><code class="descname">in_situ_oil_flow_rate</code><span class="sig-paren">(</span><em>_liquid_flow_rate</em>, <em>_oil_formation_volume_factor</em>, <em>_water_cut</em><span class="sig-paren">)</span><a class="headerlink" href="#src.formulas.in_situ_oil_flow_rate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the in-situ oil flow rate at the given conditions</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>_liquid_flow_rate</strong> (<em>double</em>) &#8211; Total liquid flow rate (<span class="math">\(bpd\)</span>).</li>
+<li><strong>_oil_formation_volume_factor</strong> (<em>double</em>) &#8211; Oil formation volume factor,
+<span class="math">\(B_o\)</span> (<span class="math">\(bbl/stb\)</span>).</li>
+<li><strong>_water_cut</strong> &#8211; Water cut, WC.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The in-situ oil flow rate in <span class="math">\(ft^3/s\)</span>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.formulas.in_situ_water_flow_rate">
+<code class="descclassname">src.formulas.</code><code class="descname">in_situ_water_flow_rate</code><span class="sig-paren">(</span><em>_liquid_flow_rate</em>, <em>_water_formation_volume_factor</em>, <em>_water_cut</em><span class="sig-paren">)</span><a class="headerlink" href="#src.formulas.in_situ_water_flow_rate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the in-situ water flow rate at the given conditions</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>_liquid_flow_rate</strong> (<em>double</em>) &#8211; Total liquid flow rate (<span class="math">\(bpd\)</span>).</li>
+<li><strong>_water_formation_volume_factor</strong> (<em>double</em>) &#8211; Water formation volume factor,
+<span class="math">\(B_w\)</span> (<span class="math">\(bbl/stb\)</span>).</li>
+<li><strong>_water_cut</strong> &#8211; Water cut, WC.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The in-situ water flow rate in <span class="math">\(ft^3/s\)</span>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.formulas.live_oil_density">
+<code class="descclassname">src.formulas.</code><code class="descname">live_oil_density</code><span class="sig-paren">(</span><em>_oil_specific_gravity</em>, <em>_gas_specific_gravity</em>, <em>_gas_solubility_in_oil</em>, <em>_oil_formation_volume_factor</em>, <em>_water_cut</em><span class="sig-paren">)</span><a class="headerlink" href="#src.formulas.live_oil_density" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the live oil density at the given conditions</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>_oil_specific_gravity</strong> (<em>double</em>) &#8211; Oil&#8217;s specific gravity (no unit).</li>
+<li><strong>_gas_specific_gravity</strong> (<em>double</em>) &#8211; Gas&#8217; specific gravity (no unit).</li>
+<li><strong>_gas_solubility_in_oil</strong> (<em>double</em>) &#8211; Gas solubility in oil, <span class="math">\(R_{so}\)</span>
+(<span class="math">\(scf/stb\)</span>).</li>
+<li><strong>_oil_formation_volume_factor</strong> (<em>double</em>) &#8211; Oil formation volume factor,
+<span class="math">\(B_o\)</span> (<span class="math">\(bbl/stb\)</span>)</li>
+<li><strong>_water_cut</strong> &#8211; Water cut, WC.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The live oil density in <span class="math">\(lbm/ft^3\)</span>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.formulas.live_water_density">
+<code class="descclassname">src.formulas.</code><code class="descname">live_water_density</code><span class="sig-paren">(</span><em>_water_specific_gravity</em>, <em>_gas_specific_gravity</em>, <em>_gas_solubility_in_water</em>, <em>_water_formation_volume_factor</em>, <em>_water_cut</em><span class="sig-paren">)</span><a class="headerlink" href="#src.formulas.live_water_density" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the live water density at the given conditions</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>_water_specific_gravity</strong> (<em>double</em>) &#8211; Water&#8217;s specific gravity (no unit).</li>
+<li><strong>_gas_specific_gravity</strong> (<em>double</em>) &#8211; Gas&#8217; specific gravity (no unit).</li>
+<li><strong>_gas_solubility_in_water</strong> (<em>double</em>) &#8211; Gas solubility in water,
+<span class="math">\(R_{sw}\)</span> (<span class="math">\(scf/stb\)</span>).</li>
+<li><strong>_water_formation_volume_factor</strong> (<em>double</em>) &#8211; Water formation volume factor,
+<span class="math">\(B_w\)</span> (<span class="math">\(bbl/stb\)</span>)</li>
+<li><strong>_water_cut</strong> &#8211; Water cut, WC.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The live water density in <span class="math">\(lbm/ft^3\)</span>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.formulas.production_gas_liquid_ratio">
+<code class="descclassname">src.formulas.</code><code class="descname">production_gas_liquid_ratio</code><span class="sig-paren">(</span><em>_production_gas_oil_ratio</em>, <em>_water_cut</em><span class="sig-paren">)</span><a class="headerlink" href="#src.formulas.production_gas_liquid_ratio" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the production gas oil ratio based on the production gas liquid
+ratio and water cut. The calculated production gas oil ratio will be on the
+same unit as the gas liquid ratio.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>_production_gas_oil_ratio</strong> &#8211; Production gas oil ratio, <span class="math">\(RGO\)</span> (
+suggested unit: <span class="math">\(scf/stb\)</span>).</li>
+<li><strong>_water_cut</strong> &#8211; Water cut.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The production gas liquid ratio, <span class="math">\(RGL\)</span> (in the same unit as the
+supplied <span class="math">\(RGO\)</span>).</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.formulas.specific_gravity_from_api">
+<code class="descclassname">src.formulas.</code><code class="descname">specific_gravity_from_api</code><span class="sig-paren">(</span><em>api_gravity</em><span class="sig-paren">)</span><a class="headerlink" href="#src.formulas.specific_gravity_from_api" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts the oil&#8217;s API gravity to specific gravity.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.formulas.superficial_velocity">
+<code class="descclassname">src.formulas.</code><code class="descname">superficial_velocity</code><span class="sig-paren">(</span><em>_in_situ_flow_rate</em>, <em>_diameter</em><span class="sig-paren">)</span><a class="headerlink" href="#src.formulas.superficial_velocity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transforms the passed in-situ flow rate into superficial velocity at the
+given diameter.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>_in_situ_flow_rate</strong> (<em>double</em>) &#8211; In situ flow rate (<span class="math">\(ft^3/s\)</span>).</li>
+<li><strong>_diameter</strong> (<em>double</em>) &#8211; The tubing diameter (<span class="math">\(in\)</span>).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The superficial velocity in <span class="math">\(ft/s\)</span>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.formulas.water_cut">
+<code class="descclassname">src.formulas.</code><code class="descname">water_cut</code><span class="sig-paren">(</span><em>_oil_flow_rate</em>, <em>_water_flow_rate</em><span class="sig-paren">)</span><a class="headerlink" href="#src.formulas.water_cut" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the water cut based on the passed oil and water flow rates.
+Supplied oil and water rates must be in the same unit.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>oil_flow_rate</strong> &#8211; Current oil flow rate.</li>
+<li><strong>water_flow_rate</strong> &#8211; Current water flow rate.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">THe water cut ratio, known as WC or BSW (between 0 and 1).</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-src">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-src" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Victor Araújo.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
