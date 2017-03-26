@@ -422,7 +422,7 @@ def gas_viscosity(_temperature, _gas_specific_gravity, _gas_density):
             unit).
 
     Returns:
-        The gas oil viscosity in :math:`cp`.
+        The gas viscosity in :math:`cp`.
     """
     molecular_weight = 28.97 * _gas_specific_gravity
     x_exponent = 3.5 + 986 / (_temperature + 460) + 0.01 * molecular_weight
