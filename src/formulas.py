@@ -388,3 +388,40 @@ def flow_pattern(_froude_number, _liquid_fraction):
         return FlowPattern.transition
     else:
         return FlowPattern.segregated
+
+
+def horizontal_liquid_phase_fraction(_flow_pattern,
+                                     _froude_number,
+                                     _no_slip_liquid_fraction):
+    constants = {
+        FlowPattern.segregated:   (0.980, 0.4846, 0.0868),
+        FlowPattern.intermittent: (0.845, 0.5351, 0.0173),
+        FlowPattern.distributed:  (1.065, 0.5824, 0.0609)
+    }
+    if _flow_pattern != FlowPattern.transition:
+        term_a, term_b, term_c = constants[_flow_pattern]
+        answer = (
+            term_a *
+            _no_slip_liquid_fraction ** term_b / _froude_number ** term_c
+        )
+        return max(answer, _no_slip_liquid_fraction)
+    else:
+        _, fr2, fr3, _ = transition_froude_numbers(_no_slip_liquid_fraction)
+        term_a = (fr3 - _froude_number) / (fr3 - fr2)
+        term_b = 1 - term_a
+        answer = (
+            (
+                term_a * horizontal_liquid_phase_fraction(
+                    FlowPattern.segregated,
+                    _froude_number,
+                    _no_slip_liquid_fraction
+                )
+            ) + (
+                term_b * horizontal_liquid_phase_fraction(
+                    FlowPattern.intermittent,
+                    _froude_number,
+                    _no_slip_liquid_fraction
+                )
+            )
+        )
+        return answer
