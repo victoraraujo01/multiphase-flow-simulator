@@ -4,6 +4,7 @@ Formulas
 from enum import Enum
 import math
 
+
 class FlowPattern(Enum):
     distributed = 1
     intermittent = 2
@@ -281,9 +282,10 @@ def superficial_velocity(_in_situ_flow_rate, _diameter):
 
 def gas_fraction(_oil_velocity, _gas_velocity, _water_velocity):
     """
-    Calculates the gas fraction of the produced fluid based on the superficial
-    velocity of each phase. Note that the suggested unit is :math:`ft/s`, but
-    as long as all velocities are in the same unit, any unit can be used.
+    Calculates the no slip gas fraction of the produced fluid based on the
+    superficial velocity of each phase. Note that the suggested unit is
+    :math:`ft/s`, but as long as all velocities are in the same unit, any unit
+    can be used.
 
     Args:
         _oil_velocity (double): Superficial oil velocity (:math:`ft/s`).
@@ -299,10 +301,10 @@ def gas_fraction(_oil_velocity, _gas_velocity, _water_velocity):
 
 def liquid_fraction(_oil_velocity, _gas_velocity, _water_velocity):
     """
-    Calculates the liquid fraction (oil + water) of the produced fluid based
-    on the superficial velocity of each phase. Note that the suggested unit is
-    :math:`ft/s`, but as long as all velocities are in the same unit, any unit
-    can be used.
+    Calculates the no slip liquid fraction (oil + water) of the produced fluid
+    based on the superficial velocity of each phase. Note that the suggested
+    unit is :math:`ft/s`, but as long as all velocities are in the same unit,
+    any unit can be used.
 
     Args:
         _oil_velocity (double): Superficial oil velocity (:math:`ft/s`).
