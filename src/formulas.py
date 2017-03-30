@@ -1,8 +1,14 @@
 """
 Formulas
 """
-
+from enum import Enum
 import math
+
+class FlowPattern(Enum):
+    distributed = 1
+    intermittent = 2
+    transition = 3
+    segregated = 4
 
 
 def water_cut(_oil_flow_rate, _water_flow_rate):
@@ -362,9 +368,21 @@ def mixture_froude_number(_mixture_velocity, _diameter):
 
 
 def transition_froude_numbers(_liquid_fraction):
-    return [
-        316.0 * _liquid_fraction ** 0.302,
-        0.0009252 * _liquid_fraction ** -2.4684,
-        0.1 * _liquid_fraction ** -1.4516,
-        0.5 * _liquid_fraction ** -6.738
-    ]
+    return (
+        316.0 * _liquid_fraction ** 0.302,  # Fr_1
+        0.0009252 * _liquid_fraction ** -2.4684,  # Fr_2
+        0.1 * _liquid_fraction ** -1.4516,  # Fr_3
+        0.5 * _liquid_fraction ** -6.738  # Fr_4
+    )
+
+
+def flow_pattern(_froude_number, _liquid_fraction):
+    fr1, fr2, fr3, fr4 = transition_froude_numbers(_liquid_fraction)
+    if _froude_number > fr1 or _froude_number > fr4:
+        return FlowPattern.distributed
+    elif _froude_number > fr3:
+        return FlowPattern.intermittent
+    elif _froude_number > fr2:
+        return FlowPattern.transition
+    else:
+        return FlowPattern.segregated
