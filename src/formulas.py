@@ -348,13 +348,13 @@ def water_fraction(_oil_velocity, _water_velocity):
         _water_velocity (double): Superficial water velocity (:math:`ft/s`).
 
     Returns:
-        THe oil fraction.
+        THe water fraction.
     """
     total_velocity = _oil_velocity + _water_velocity
     return _water_velocity / total_velocity
 
 
-def mixture_froude_number(_mixture_velocity, _diameter):
+def froude_number(_mixture_velocity, _diameter):
     """
     Calculates the mixture Froude number based on the mixture velocity (sum of
     all phases respective superficial velocities) and the tubing diameter.
@@ -390,9 +390,9 @@ def flow_pattern(_froude_number, _liquid_fraction):
         return FlowPattern.segregated
 
 
-def horizontal_liquid_phase_fraction(_flow_pattern,
-                                     _froude_number,
-                                     _no_slip_liquid_fraction):
+def horz_liquid_phase_fraction(_flow_pattern,
+                               _froude_number,
+                               _no_slip_liquid_fraction):
     constants = {
         FlowPattern.segregated:   (0.980, 0.4846, 0.0868),
         FlowPattern.intermittent: (0.845, 0.5351, 0.0173),
@@ -411,13 +411,13 @@ def horizontal_liquid_phase_fraction(_flow_pattern,
         term_b = 1 - term_a
         answer = (
             (
-                term_a * horizontal_liquid_phase_fraction(
+                term_a * horz_liquid_phase_fraction(
                     FlowPattern.segregated,
                     _froude_number,
                     _no_slip_liquid_fraction
                 )
             ) + (
-                term_b * horizontal_liquid_phase_fraction(
+                term_b * horz_liquid_phase_fraction(
                     FlowPattern.intermittent,
                     _froude_number,
                     _no_slip_liquid_fraction
