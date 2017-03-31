@@ -540,6 +540,7 @@ def liquid_holdup_with_incl(_flow_pattern,
     }
 
     term_d, term_e, term_f, term_g = constants[_flow_pattern]
+    inclination_rad = _inclination * math.pi/180
 
     c_parameter = max(0, (
         (1 - _no_slip_liquid_fraction) *
@@ -555,12 +556,12 @@ def liquid_holdup_with_incl(_flow_pattern,
 
     phi_parameter = (
         1 + c_parameter * (
-            math.sin(1.8 * _inclination) -
-            0.333 * math.sin(1.8 * _inclination) ** 3
+            math.sin(1.8 * inclination_rad) -
+            0.333 * (math.sin(1.8 * inclination_rad) ** 3)
         )
     )
 
-    return _horz_liquid_holdup * phi_parameter
+    return max(0, min(1, _horz_liquid_holdup * phi_parameter))
 
 
 def gravitational_pressure_gradient(_liquid_density,

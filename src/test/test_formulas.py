@@ -30,6 +30,7 @@ def input():
 
     # Well data
     input_["diameter"] = 1.995  # in
+    input_["inclination"] = 90  # degrees
     return input_
 
 
@@ -65,6 +66,11 @@ def correlation_results(input):
     results["alpha_h_tran"] = []
     results["pattern"] = []
     results["rho_liq"] = []
+    results["sigma_l"] = []
+    results["nlv"] = []
+    results["alpha_seg"] = []
+    results["alpha_int"] = []
+    results["alpha_dist"] = []
     for pressure in input["pressures"]:
         gas_solubility_in_water = correlations.gas_solubility_in_water(
             pressure,
@@ -222,6 +228,46 @@ def correlation_results(input):
             water_density,
             water_fraction
         )
+        sigma_dog = correlations.dead_oil_gas_surface_tension(
+            input["temperature"],
+            input["oil_api_gravity"]
+        )
+        sigma_og = correlations.live_oil_gas_surface_tension(
+            sigma_dog,
+            gas_solubility_in_oil
+        )
+        sigma_wg = correlations.water_gas_surface_tension()
+        liquid_surface_tension = formulas.estimate_liquid_property(
+            sigma_og,
+            sigma_wg,
+            water_fraction
+        )
+        liquid_velocity_number = formulas.liquid_velocity_number(
+            oil_velocity + water_velocity,
+            rho_liq,
+            liquid_surface_tension
+        )
+        alpha_seg = formulas.liquid_holdup_with_incl(
+            formulas.FlowPattern.segregated,
+            froude,
+            no_slip_liquid_fraction,
+            liquid_velocity_number,
+            input["inclination"]
+        )
+        # alpha_dist = formulas.liquid_holdup_with_incl(
+        #     formulas.FlowPattern.distributed,
+        #     froude,
+        #     no_slip_liquid_fraction,
+        #     liquid_velocity_number,
+        #     input["inclination"]
+        # )
+        # alpha_int = formulas.liquid_holdup_with_incl(
+        #     formulas.FlowPattern.intermittent,
+        #     froude,
+        #     no_slip_liquid_fraction,
+        #     liquid_velocity_number,
+        #     input["inclination"]
+        # )
         results["rsw"].append(gas_solubility_in_water)
         results["rso"].append(gas_solubility_in_oil)
         results["bg"].append(gas_form_volume_factor)
@@ -250,6 +296,11 @@ def correlation_results(input):
         results["alpha_h_tran"].append(alpha_h_tran)
         results["pattern"].append(pattern)
         results["rho_liq"].append(rho_liq)
+        results["sigma_l"].append(liquid_surface_tension)
+        results["nlv"].append(liquid_velocity_number)
+        results["alpha_seg"].append(alpha_seg)
+        # results["alpha_int"].append(alpha_int)
+        # results["alpha_dist"].append(alpha_dist)
     return results
 
 
@@ -337,6 +388,25 @@ def expected_answers():
         53.5157193774093, 53.9928785276566, 54.0480899080085,
         54.0492853935634
     ]
+    answers["sigma_l"] = [
+        27.2985627448439, 27.2504251653417, 27.0433185286994,
+        26.4050356952703, 26.4050356952703, 26.4050356952703,
+        26.4050356952703
+    ]
+    answers["nlv"] = [
+        4.34066376295262, 4.3430814109979, 4.35354789930155,
+        4.38080833941479, 4.35173977682921, 4.34840529840787,
+        4.34833316327154
+    ]
+    answers["alpha_seg"] = [
+        0.667661453417903, 0.711192036405742, 0.80758542712356, 1., 1., 1., 1.
+    ]
+    answers["alpha_dist"] = [
+        0.527262065160054, 0.587347992764985, 0.736112769123655, 1., 1., 1., 1.
+    ]
+    answers["alpha_int"] = [
+        0.501163698847922, 0.728120216442387, 0.928501833186807, 1., 1., 1., 1.
+    ]
     return answers
 
 
@@ -410,3 +480,17 @@ def test_pattern(input, expected_answers, correlation_results):
 
 def test_liquid_density(input, expected_answers, correlation_results):
     assert correlation_results["rho_liq"] == pytest.approx(expected_answers["rho_liq"])
+
+
+def test_liquid_surface_tension(input, expected_answers, correlation_results):
+    assert correlation_results["sigma_l"] == pytest.approx(expected_answers["sigma_l"])
+
+
+def test_liquid_velocity_number(input, expected_answers, correlation_results):
+    assert correlation_results["nlv"] == pytest.approx(expected_answers["nlv"])
+
+
+def test_liquid_holdup_with_incl(input, expected_answers, correlation_results):
+    assert correlation_results["alpha_seg"] == pytest.approx(expected_answers["alpha_seg"])
+    assert correlation_results["alpha_int"] == pytest.approx(expected_answers["alpha_int"])
+    assert correlation_results["alpha_dist"] == pytest.approx(expected_answers["alpha_dist"])
