@@ -479,3 +479,26 @@ def estimate_liquid_property(_oil_property, _water_property, _water_fraction):
         _oil_property * (1 - _water_fraction) +
         _water_property * _water_fraction
     )
+
+
+def liquid_velocity_number(_liquid_superficial_velocity,
+                           _liquid_density,
+                           _superficial_tension):
+    """
+    Returns the liquid velocity number used in the correction of the liquid
+    fraction for different inclinations.
+
+    Args:
+        _liquid_superficial_velocity (double): The superficial liquid velocity
+            :math:`V_{so} + V_{sw}` in ft/s.
+        _liquid_density (double): The liquid density in :math:`lbm/ft^3`.
+        _superficial_tension (double): The superficial tension in
+            :math:`dynes/cm`
+
+    Returns:
+        The liquid density in the same unit as the given oil and water density.
+    """
+    return (
+        1.938 * _liquid_superficial_velocity *
+        (_liquid_density / _superficial_tension) ** (1/4)
+    )
