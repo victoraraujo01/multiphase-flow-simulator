@@ -458,3 +458,56 @@ def water_viscosity(_pressure, _temperature):
         )
     )
     return viscosity
+
+
+def dead_oil_gas_surface_tension(_temperature, _oil_api_gravity):
+    """
+    Calculates the dead oil - gas surface tension using Abdul-Majeed
+    correlation (an update to Baker and Swerdloff's correlation). Source:
+    http://petrowiki.org/Interfacial_tension#Water-hydrocarbon_surface_tension
+
+    Args:
+        _temperature (double): Temperature (fahrenheit degrees).
+        _oil_api_gravity: Oil's API gravity (API degrees).
+
+    Returns:
+        The dead oil - gas surface tension in :math:`dina/cm`
+    """
+    return (
+        (1.17013 - 1.694e-3 * _temperature) *
+        (38.085 - 0.259 * _oil_api_gravity)
+    )
+
+
+def live_oil_gas_surface_tension(_dead_oil_surface_tension,
+                                 _gas_solubility_in_oil):
+    """
+    Corrects the dead oil - gas surface tension using Abdul-Majeed proposed
+    method to obtain the surface tension between live oil and gas. Source:
+    http://petrowiki.org/Interfacial_tension#Water-hydrocarbon_surface_tension
+
+    Args:
+        _dead_oil_surface_tension (double): Dead oil surface tension in
+            :math:`dina/cm`
+        _gas_solubility_in_oil_ (double): Gas solubility in oil, :math:`R_{so}`
+            (in :math:`scf/stb`).
+    Returns:
+        The oil - gas surface tension in :math:`dina/cm`
+    """
+    return _dead_oil_surface_tension * (
+        0.056379 +
+        0.94362 * math.exp(
+            -3.8491e-3 * _gas_solubility_in_oil
+        )
+    )
+
+
+def water_gas_surface_tension():
+    """
+    Returns the water - gas surface tension. Currently there is no correlation
+    implemented for this property.
+
+    Returns:
+        The water - gas surface tension in :math:`dina/cm`
+    """
+    return 90.359630470339
