@@ -10,6 +10,7 @@ class FlowPattern(Enum):
     intermittent = 2
     transition = 3
     segregated = 4
+    downward = 5
 
 
 def water_cut(_oil_flow_rate, _water_flow_rate):
@@ -502,3 +503,61 @@ def liquid_velocity_number(_liquid_superficial_velocity,
         1.938 * _liquid_superficial_velocity *
         (_liquid_density / _superficial_tension) ** (1/4)
     )
+
+
+def liquid_holdup_with_incl(_flow_pattern,
+                            _froude_number,
+                            _no_slip_liquid_fraction,
+                            _liquid_velocity_number,
+                            _inclination):
+    """
+    Returns the liquid fraction considering slippage for any inclination.
+
+    Args:
+        _flow_pattern (FlowPattern): The flow pattern as determined by
+            `flow_pattern`.
+        _froude_number (double): The mixture's froude number.
+        _no_slip_liquid_fraction (double): The no slip liquid fraction.
+        _liquid_velocity_number (double): The liquid velocity number obtained
+            using `liquid_velocity_number()`.
+        _inclination (double): The inclination angle with the horizontal in
+            degrees.
+
+    Returns:
+        The liquid fraction considering slippage for any inclination.
+    """
+    _horz_liquid_holdup = horz_liquid_holdup(
+        _flow_pattern,
+        _froude_number,
+        _no_slip_liquid_fraction
+    )
+
+    constants = {
+        FlowPattern.segregated:   (0.011, -3.7680, 3.5390, -1.6140),
+        FlowPattern.intermittent: (2.960, 0.3050, -0.4473, 0.0978),
+        FlowPattern.distributed:  (0.0, 0.0, 0.0, 0.0),
+        FlowPattern.downward:     (4.700, -0.3692, 0.1244, -0.5056)
+    }
+
+    term_d, term_e, term_f, term_g = constants[_flow_pattern]
+
+    c_parameter = max(0, (
+        (1 - _no_slip_liquid_fraction) *
+        math.log(
+            term_d *
+            _no_slip_liquid_fraction ** term_e *
+            _liquid_velocity_number ** term_f *
+            _froude_number ** term_g
+        )
+    ))
+    if _flow_pattern == FlowPattern.distributed:
+        c_parameter = 0
+
+    phi_parameter = (
+        1 + c_parameter * (
+            math.sin(1.8 * _inclination) -
+            0.333 * math.sin(1.8 * _inclination) ** 3
+        )
+    )
+
+    return _horz_liquid_holdup * phi_parameter
