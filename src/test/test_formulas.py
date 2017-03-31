@@ -63,6 +63,8 @@ def correlation_results(input):
     results["alpha_h_int"] = []
     results["alpha_h_dist"] = []
     results["alpha_h_tran"] = []
+    results["pattern"] = []
+    results["rho_liq"] = []
     for pressure in input["pressures"]:
         gas_solubility_in_water = correlations.gas_solubility_in_water(
             pressure,
@@ -183,6 +185,10 @@ def correlation_results(input):
             gas_velocity,
             water_velocity
         )
+        water_fraction = formulas.water_fraction(
+            oil_velocity,
+            water_velocity
+        )
         froude = formulas.froude_number(
             oil_velocity + gas_velocity + water_velocity,
             input["diameter"]
@@ -210,6 +216,12 @@ def correlation_results(input):
             froude,
             no_slip_liquid_fraction
         )
+        pattern = formulas.flow_pattern(froude, no_slip_liquid_fraction)
+        rho_liq = formulas.estimate_liquid_property(
+            oil_density,
+            water_density,
+            water_fraction
+        )
         results["rsw"].append(gas_solubility_in_water)
         results["rso"].append(gas_solubility_in_oil)
         results["bg"].append(gas_form_volume_factor)
@@ -236,6 +248,8 @@ def correlation_results(input):
         results["alpha_h_int"].append(alpha_h_int)
         results["alpha_h_dist"].append(alpha_h_dist)
         results["alpha_h_tran"].append(alpha_h_tran)
+        results["pattern"].append(pattern)
+        results["rho_liq"].append(rho_liq)
     return results
 
 
@@ -302,18 +316,26 @@ def expected_answers():
         1.01460229702376, 1.0161670044178, 1.01634731595193, 1.01635121853251
     ]
     answers["alpha_h_int"] = [
-        0.501163698847922, 0.560441385674535, 0.702664285046605,
-        0.850864188258459, 0.851125558383153, 0.851155657072191,
-        0.851156308467212
+        0.501163698847922, 0.560441385674535,
+        0.714677, 1.0, 1.0, 1.0, 1.0
+        # 0.702664285046605, 0.850864188258459, 0.851125558383153,
+        # 0.851155657072191, 0.851156308467212
     ]
     answers["alpha_h_dist"] = [
         0.567279421596702, 0.651336332312092, 0.861373062062183,
         1.09124621336544, 1.09242669094078, 1.09256269027836, 1.09256563370637
     ]
     answers["alpha_h_tran"] = [
-        -0.0113519048845774, -0.0453475970426878, -0.0890487660906993,
-        -0.0919502819555191, -0.0795397220250882, -0.0781140475828659,
-        -0.0780832012158941
+        0.394882, 0.480499, 0.714677, 1.0, 1.0, 1.0, 1.0
+        # -0.0113519048845774, -0.0453475970426878, -0.0890487660906993,
+        # -0.0919502819555191, -0.0795397220250882, -0.0781140475828659,
+        # -0.0780832012158941
+    ]
+    answers["pattern"] = [2, 2, 2, 1, 1, 1, 1]
+    answers["rho_liq"] = [
+        53.4959715812803, 53.4921112656614, 53.4754149044103,
+        53.5157193774093, 53.9928785276566, 54.0480899080085,
+        54.0492853935634
     ]
     return answers
 
@@ -324,10 +346,8 @@ def test_free_gas_liquid_ratio(input, expected_answers, correlation_results):
 
 def test_gas_density(input, expected_answers, correlation_results):
     expected = expected_answers["rho_gas"]
-    assert (
-        correlation_results["rho_gas_ft"] == pytest.approx(expected) and
-        correlation_results["rho_gas_bbl"] == pytest.approx(expected)
-    )
+    assert correlation_results["rho_gas_ft"] == pytest.approx(expected)
+    assert correlation_results["rho_gas_bbl"] == pytest.approx(expected)
 
 
 def test_live_oil_density(input, expected_answers, correlation_results):
@@ -356,11 +376,9 @@ def test_in_situ_water_flow_rate(input, expected_answers, correlation_results):
 
 
 def test_superficial_velocity(input, expected_answers, correlation_results):
-    assert (
-        correlation_results["vsg"] == pytest.approx(expected_answers["vsg"]) and
-        correlation_results["vso"] == pytest.approx(expected_answers["vso"]) and
-        correlation_results["vsw"] == pytest.approx(expected_answers["vsw"])
-    )
+    assert correlation_results["vsg"] == pytest.approx(expected_answers["vsg"])
+    assert correlation_results["vso"] == pytest.approx(expected_answers["vso"])
+    assert correlation_results["vsw"] == pytest.approx(expected_answers["vsw"])
 
 
 def test_no_slip_liquid_fraction(input, expected_answers, correlation_results):
@@ -378,10 +396,17 @@ def test_trans_froude_number(input, expected_answers, correlation_results):
     assert correlation_results["fr_trans"] == expected
 
 
-def test_horz_liquid_phase_fraction(input, expected_answers, correlation_results):
-    assert (
-        correlation_results["alpha_h_seg"] == pytest.approx(expected_answers["alpha_h_seg"]) and
-        correlation_results["alpha_h_int"] == pytest.approx(expected_answers["alpha_h_int"]) and
-        correlation_results["alpha_h_dist"] == pytest.approx(expected_answers["alpha_h_dist"]) and
-        correlation_results["alpha_h_tran"] == pytest.approx(expected_answers["alpha_h_tran"])
-    )
+def test_horz_liquid_holdup(input, expected_answers, correlation_results):
+    assert correlation_results["alpha_h_seg"] == pytest.approx(expected_answers["alpha_h_seg"])
+    assert correlation_results["alpha_h_int"] == pytest.approx(expected_answers["alpha_h_int"])
+    assert correlation_results["alpha_h_dist"] == pytest.approx(expected_answers["alpha_h_dist"])
+    assert correlation_results["alpha_h_tran"] == pytest.approx(expected_answers["alpha_h_tran"])
+
+
+def test_pattern(input, expected_answers, correlation_results):
+    results = [pat.value for pat in correlation_results["pattern"]]
+    assert results == expected_answers["pattern"]
+
+
+def test_liquid_density(input, expected_answers, correlation_results):
+    assert correlation_results["rho_liq"] == pytest.approx(expected_answers["rho_liq"])
