@@ -178,7 +178,7 @@ def correlation_results(input):
             water_flow_rate,
             input["diameter"]
         )
-        no_slip_liquid_fraction = formulas.liquid_fraction(
+        no_slip_liquid_fraction = formulas.no_slip_liquid_fraction(
             oil_velocity,
             gas_velocity,
             water_velocity
@@ -190,22 +190,22 @@ def correlation_results(input):
         froude_trans = formulas.transition_froude_numbers(
             no_slip_liquid_fraction
         )
-        alpha_h_seg = formulas.horz_liquid_phase_fraction(
+        alpha_h_seg = formulas.horz_liquid_holdup(
             formulas.FlowPattern.segregated,
             froude,
             no_slip_liquid_fraction
         )
-        alpha_h_int = formulas.horz_liquid_phase_fraction(
+        alpha_h_int = formulas.horz_liquid_holdup(
             formulas.FlowPattern.intermittent,
             froude,
             no_slip_liquid_fraction
         )
-        alpha_h_dist = formulas.horz_liquid_phase_fraction(
+        alpha_h_dist = formulas.horz_liquid_holdup(
             formulas.FlowPattern.distributed,
             froude,
             no_slip_liquid_fraction
         )
-        alpha_h_tran = formulas.horz_liquid_phase_fraction(
+        alpha_h_tran = formulas.horz_liquid_holdup(
             formulas.FlowPattern.transition,
             froude,
             no_slip_liquid_fraction

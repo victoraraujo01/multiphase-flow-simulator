@@ -280,7 +280,7 @@ def superficial_velocity(_in_situ_flow_rate, _diameter):
     return 4 * _in_situ_flow_rate / (math.pi * (_diameter / 12) ** 2)
 
 
-def gas_fraction(_oil_velocity, _gas_velocity, _water_velocity):
+def no_slip_gas_fraction(_oil_velocity, _gas_velocity, _water_velocity):
     """
     Calculates the no slip gas fraction of the produced fluid based on the
     superficial velocity of each phase. Note that the suggested unit is
@@ -293,13 +293,13 @@ def gas_fraction(_oil_velocity, _gas_velocity, _water_velocity):
         _water_velocity (double): Superficial water velocity (:math:`ft/s`).
 
     Returns:
-        THe gas fraction.
+        THe no slip gas fraction.
     """
     total_velocity = _oil_velocity + _gas_velocity + _water_velocity
     return _gas_velocity / total_velocity
 
 
-def liquid_fraction(_oil_velocity, _gas_velocity, _water_velocity):
+def no_slip_liquid_fraction(_oil_velocity, _gas_velocity, _water_velocity):
     """
     Calculates the no slip liquid fraction (oil + water) of the produced fluid
     based on the superficial velocity of each phase. Note that the suggested
@@ -312,7 +312,7 @@ def liquid_fraction(_oil_velocity, _gas_velocity, _water_velocity):
         _water_velocity (double): Superficial water velocity (:math:`ft/s`).
 
     Returns:
-        THe liquid (oil + water) fraction.
+        THe no slip liquid (oil + water) fraction.
     """
     total_velocity = _oil_velocity + _gas_velocity + _water_velocity
     return (_oil_velocity + _water_velocity) / total_velocity
@@ -369,17 +369,38 @@ def froude_number(_mixture_velocity, _diameter):
     return 0.37267 * (_mixture_velocity ** 2) / _diameter
 
 
-def transition_froude_numbers(_liquid_fraction):
+def transition_froude_numbers(_no_slip_liquid_fraction):
+    """
+    Calculates the Froude number limits used to determine flow pattern.
+
+    Args:
+        _no_slip_liquid_fraction (double): The no slip liquid fraction
+
+    Returns:
+        A tuple with the four froude number limits in the format
+        :math:`(Fr_1, Fr_2, Fr_3 and Fr_4)`.
+    """
     return (
-        316.0 * _liquid_fraction ** 0.302,  # Fr_1
-        0.0009252 * _liquid_fraction ** -2.4684,  # Fr_2
-        0.1 * _liquid_fraction ** -1.4516,  # Fr_3
-        0.5 * _liquid_fraction ** -6.738  # Fr_4
+        316.0 * _no_slip_liquid_fraction ** 0.302,  # Fr_1
+        0.0009252 * _no_slip_liquid_fraction ** -2.4684,  # Fr_2
+        0.1 * _no_slip_liquid_fraction ** -1.4516,  # Fr_3
+        0.5 * _no_slip_liquid_fraction ** -6.738  # Fr_4
     )
 
 
-def flow_pattern(_froude_number, _liquid_fraction):
-    fr1, fr2, fr3, fr4 = transition_froude_numbers(_liquid_fraction)
+def flow_pattern(_froude_number, _no_slip_liquid_fraction):
+    """
+    Returns the flow pattern based no the Froude number and the no slip liquid
+    fraction.
+
+    Args:
+        _froude_number (double): The mixture's froude number
+        _no_slip_liquid_fraction (double): The no slip liquid fraction
+
+    Returns:
+        The flow pattern using the `FlowPattern` enum.
+    """
+    fr1, fr2, fr3, fr4 = transition_froude_numbers(_no_slip_liquid_fraction)
     if _froude_number > fr1 or _froude_number > fr4:
         return FlowPattern.distributed
     elif _froude_number > fr3:
@@ -390,9 +411,21 @@ def flow_pattern(_froude_number, _liquid_fraction):
         return FlowPattern.segregated
 
 
-def horz_liquid_phase_fraction(_flow_pattern,
-                               _froude_number,
-                               _no_slip_liquid_fraction):
+def horz_liquid_holdup(_flow_pattern,
+                       _froude_number,
+                       _no_slip_liquid_fraction):
+    """
+    Returns the liquid fraction considering slippage for horizontal flow.
+
+    Args:
+        _flow_pattern (FlowPattern): The flow pattern as determined by
+            `flow_pattern`.
+        _froude_number (double): The mixture's froude number
+        _no_slip_liquid_fraction (double): The no slip liquid fraction
+
+    Returns:
+        The liquid fraction considering slippage for horizontal flow.
+    """
     constants = {
         FlowPattern.segregated:   (0.980, 0.4846, 0.0868),
         FlowPattern.intermittent: (0.845, 0.5351, 0.0173),
@@ -411,17 +444,17 @@ def horz_liquid_phase_fraction(_flow_pattern,
         term_b = 1 - term_a
         answer = (
             (
-                term_a * horz_liquid_phase_fraction(
+                term_a * horz_liquid_holdup(
                     FlowPattern.segregated,
                     _froude_number,
                     _no_slip_liquid_fraction
                 )
             ) + (
-                term_b * horz_liquid_phase_fraction(
+                term_b * horz_liquid_holdup(
                     FlowPattern.intermittent,
                     _froude_number,
                     _no_slip_liquid_fraction
                 )
             )
         )
-        return answer
+        return max(answer, _no_slip_liquid_fraction)
