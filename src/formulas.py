@@ -590,3 +590,43 @@ def gravitational_pressure_gradient(_liquid_density,
     )
     _inclination_rad = _inclination * math.pi/180
     return -0.433 * _mixture_specific_gravity * math.sin(_inclination_rad)
+
+
+def reynolds(_density, _velocity, _diameter, _viscosity):
+    return 124 * _density * abs(_velocity) * _diameter / _viscosity
+
+
+def moody_friction_factor(_reynolds, _rugosity):
+    term_a = (
+        2.457 * math.log(
+            1 / (
+                (7/_reynolds) ** 0.9 + 0.27 * _rugosity
+            )
+        )
+    ) ** 16
+    term_b = (37530 / _reynolds) ** 16
+    answer = (
+        8 * (
+            (8 / _reynolds) ** 12 +
+            1 / ((term_a + term_b) ** (3/2))
+        ) ** (1/12)
+    )
+    return answer
+
+
+def friction_factor(_no_slip_liquid_fraction,
+                    _liquid_holdup,
+                    _moody_friction_factor):
+    term_y = _no_slip_liquid_fraction / (_liquid_holdup ** 2)
+    term_s = math.log(2.2 * term_y - 1.2)
+    if term_y < 1.0 or term_y > 1.2:
+        term_s = (
+            math.log(term_y) /
+            (
+                -0.0523 +
+                3.182 * math.log(term_y) -
+                0.8725 * (math.log(term_y) ** 2) +
+                0.01853 * (math.log(term_y) ** 4)
+            )
+        )
+    return _moody_friction_factor * math.exp(term_s)
