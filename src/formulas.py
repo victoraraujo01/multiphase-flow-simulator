@@ -13,6 +13,10 @@ class FlowPattern(Enum):
     downward = 5
 
 
+def density_to_specific_gravity(_density):
+    return _density / 62.4
+
+
 def water_cut(_oil_flow_rate, _water_flow_rate):
     """
     Calculates the water cut based on the passed oil and water flow rates.
