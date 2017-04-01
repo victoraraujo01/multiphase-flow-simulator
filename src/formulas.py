@@ -563,13 +563,10 @@ def liquid_holdup_with_incl(_horz_liquid_holdup,
             0.333 * (math.sin(1.8 * inclination_rad) ** 3)
         )
     )
-
     return max(0, min(1, _horz_liquid_holdup * phi_parameter))
 
 
-def gravitational_pressure_gradient(_liquid_density,
-                                    _gas_density,
-                                    _liquid_fraction,
+def gravitational_pressure_gradient(_mixture_specific_gravity,
                                     _inclination):
     """
     Returns the pressure gradient due to gravity.
@@ -586,12 +583,6 @@ def gravitational_pressure_gradient(_liquid_density,
         The pressure gradient due to gravity :math:`\frac{dP}{dz}` in
         :math:`psi/ft`.
     """
-    _mixture_specific_gravity = (
-        (
-            _liquid_density * _liquid_fraction +
-            _gas_density * (1 - _liquid_fraction)
-        ) / 62.4
-    )
     _inclination_rad = _inclination * math.pi/180
     return -0.433 * _mixture_specific_gravity * math.sin(_inclination_rad)
 
