@@ -465,7 +465,9 @@ def horz_liquid_holdup(_flow_pattern,
         return max(answer, _no_slip_liquid_fraction)
 
 
-def estimate_liquid_property(_oil_property, _water_property, _water_fraction):
+def estimate_fluid_property(_first_fluid_property,
+                            _second_fluid_property,
+                            _fraction_of_second_fluid):
     """
     Returns the property of the liquid mixture by weighting the water and oil
     properties by their respective no slip fractions.
@@ -481,8 +483,8 @@ def estimate_liquid_property(_oil_property, _water_property, _water_fraction):
         properties
     """
     return (
-        _oil_property * (1 - _water_fraction) +
-        _water_property * _water_fraction
+        _first_fluid_property * (1 - _fraction_of_second_fluid) +
+        _second_fluid_property * _fraction_of_second_fluid
     )
 
 
