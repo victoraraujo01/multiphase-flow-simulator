@@ -625,3 +625,18 @@ def friction_factor(_no_slip_liquid_fraction,
             )
         )
     return _moody_friction_factor * math.exp(term_s)
+
+
+def frictional_pressure_gradient(_friction_factor,
+                                 _mixture_specific_gravity,
+                                 _mixture_velocity,
+                                 _diameter):
+    _mixture_flow_rate = (
+        math.pi * ((_diameter / 12) ** 2) * _mixture_velocity / 4
+    ) * 86400 / 5.614583
+    answer = (
+        -1.1471e-5 * _friction_factor * _mixture_specific_gravity *
+        _mixture_flow_rate ** 2 /
+        (_diameter ** 5)
+    )
+    return answer
