@@ -202,6 +202,7 @@ def correlation_results(input):
         froude_trans = formulas.transition_froude_numbers(
             no_slip_liquid_fraction
         )
+        pattern = formulas.flow_pattern(froude, no_slip_liquid_fraction)
         alpha_h_seg = formulas.horz_liquid_holdup(
             formulas.FlowPattern.segregated,
             froude,
@@ -222,8 +223,12 @@ def correlation_results(input):
             froude,
             no_slip_liquid_fraction
         )
-        pattern = formulas.flow_pattern(froude, no_slip_liquid_fraction)
-        rho_liq = formulas.estimate_liquid_property(
+        alpha_h = formulas.horz_liquid_holdup(
+            pattern,
+            froude,
+            no_slip_liquid_fraction
+        )
+        rho_liq = formulas.estimate_fluid_property(
             oil_density,
             water_density,
             water_fraction
@@ -237,7 +242,7 @@ def correlation_results(input):
             gas_solubility_in_oil
         )
         sigma_wg = correlations.water_gas_surface_tension()
-        liquid_surface_tension = formulas.estimate_liquid_property(
+        liquid_surface_tension = formulas.estimate_fluid_property(
             sigma_og,
             sigma_wg,
             water_fraction
@@ -248,26 +253,29 @@ def correlation_results(input):
             liquid_surface_tension
         )
         alpha_seg = formulas.liquid_holdup_with_incl(
+            alpha_h,
             formulas.FlowPattern.segregated,
             froude,
             no_slip_liquid_fraction,
             liquid_velocity_number,
             input["inclination"]
         )
-        # alpha_dist = formulas.liquid_holdup_with_incl(
-        #     formulas.FlowPattern.distributed,
-        #     froude,
-        #     no_slip_liquid_fraction,
-        #     liquid_velocity_number,
-        #     input["inclination"]
-        # )
-        # alpha_int = formulas.liquid_holdup_with_incl(
-        #     formulas.FlowPattern.intermittent,
-        #     froude,
-        #     no_slip_liquid_fraction,
-        #     liquid_velocity_number,
-        #     input["inclination"]
-        # )
+        alpha_int = formulas.liquid_holdup_with_incl(
+            alpha_h,
+            formulas.FlowPattern.intermittent,
+            froude,
+            no_slip_liquid_fraction,
+            liquid_velocity_number,
+            input["inclination"]
+        )
+        alpha_dist = formulas.liquid_holdup_with_incl(
+            alpha_h,
+            formulas.FlowPattern.distributed,
+            froude,
+            no_slip_liquid_fraction,
+            liquid_velocity_number,
+            input["inclination"]
+        )
         results["rsw"].append(gas_solubility_in_water)
         results["rso"].append(gas_solubility_in_oil)
         results["bg"].append(gas_form_volume_factor)
@@ -299,8 +307,8 @@ def correlation_results(input):
         results["sigma_l"].append(liquid_surface_tension)
         results["nlv"].append(liquid_velocity_number)
         results["alpha_seg"].append(alpha_seg)
-        # results["alpha_int"].append(alpha_int)
-        # results["alpha_dist"].append(alpha_dist)
+        results["alpha_int"].append(alpha_int)
+        results["alpha_dist"].append(alpha_dist)
     return results
 
 
@@ -401,10 +409,10 @@ def expected_answers():
     answers["alpha_seg"] = [
         0.667661453417903, 0.711192036405742, 0.80758542712356, 1., 1., 1., 1.
     ]
-    answers["alpha_dist"] = [
+    answers["alpha_int"] = [
         0.527262065160054, 0.587347992764985, 0.736112769123655, 1., 1., 1., 1.
     ]
-    answers["alpha_int"] = [
+    answers["alpha_dist"] = [
         0.501163698847922, 0.728120216442387, 0.928501833186807, 1., 1., 1., 1.
     ]
     return answers
