@@ -28,9 +28,10 @@ def input():
     input_["production_gas_liquid_ratio"] = 10  # scf/stb
     input_["liquid_flow_rate"] = 600  # stb/day
 
-    # Well data
+    # Tubing data
     input_["diameter"] = 1.995  # in
     input_["inclination"] = 90  # degrees
+    input_["rugosity"] = 0.000902255639097744
     return input_
 
 
@@ -71,6 +72,11 @@ def correlation_results(input):
     results["alpha_seg"] = []
     results["alpha_int"] = []
     results["alpha_dist"] = []
+    results["n_re"] = []
+    results["f_n"] = []
+    results["ftp_fn"] = []
+    results["dp_grav"] = []
+    results["dp_fric"] = []
     for pressure in input["pressures"]:
         gas_solubility_in_water = correlations.gas_solubility_in_water(
             pressure,
@@ -276,6 +282,80 @@ def correlation_results(input):
             liquid_velocity_number,
             input["inclination"]
         )
+        liquid_holdup = formulas.liquid_holdup_with_incl(
+            alpha_h,
+            pattern,
+            froude,
+            no_slip_liquid_fraction,
+            liquid_velocity_number,
+            input["inclination"]
+        )
+        oil_viscosity = correlations.live_oil_viscosity(
+            pressure,
+            input["bubble_point"],
+            input["temperature"],
+            gas_solubility_in_oil,
+            input["oil_api_gravity"]
+        )
+        gas_viscosity = correlations.gas_viscosity(
+            input["temperature"],
+            input["gas_specific_gravity"],
+            gas_density_bg_in_ft
+        )
+        water_viscosity = correlations.water_viscosity(
+            pressure, input["temperature"]
+        )
+        liquid_viscosity = formulas.estimate_fluid_property(
+            oil_viscosity,
+            water_viscosity,
+            water_fraction
+        )
+        mixture_viscosity_no_slip = formulas.estimate_fluid_property(
+            liquid_viscosity,
+            gas_viscosity,
+            (1 - no_slip_liquid_fraction)
+        )
+        mixture_density_no_slip = formulas.estimate_fluid_property(
+            rho_liq,
+            gas_density_bg_in_ft,
+            (1 - no_slip_liquid_fraction)
+        )
+        mixture_density_holdup = formulas.estimate_fluid_property(
+            rho_liq,
+            gas_density_bg_in_ft,
+            (1 - liquid_holdup)
+        )
+        mixture_specific_grav_no_slip = formulas.density_to_specific_gravity(
+            mixture_density_no_slip
+        )
+        mixture_specific_grav_holdup = formulas.density_to_specific_gravity(
+            mixture_density_holdup
+        )
+        reynolds = formulas.reynolds(
+            mixture_density_no_slip,
+            oil_velocity + water_velocity + gas_velocity,
+            input["diameter"],
+            mixture_viscosity_no_slip
+        )
+        moody_friction = formulas.moody_friction_factor(
+            reynolds,
+            input["rugosity"]
+        )
+        friction_factor = formulas.friction_factor(
+            no_slip_liquid_fraction,
+            liquid_holdup,
+            moody_friction
+        )
+        grav_pressure_gradient = formulas.gravitational_pressure_gradient(
+            mixture_specific_grav_holdup,
+            input["inclination"]
+        )
+        fric_pressure_gradient = formulas.frictional_pressure_gradient(
+            friction_factor,
+            mixture_specific_grav_no_slip,
+            oil_velocity + water_velocity + gas_velocity,
+            input["diameter"]
+        )
         results["rsw"].append(gas_solubility_in_water)
         results["rso"].append(gas_solubility_in_oil)
         results["bg"].append(gas_form_volume_factor)
@@ -309,6 +389,11 @@ def correlation_results(input):
         results["alpha_seg"].append(alpha_seg)
         results["alpha_int"].append(alpha_int)
         results["alpha_dist"].append(alpha_dist)
+        results["n_re"].append(reynolds)
+        results["f_n"].append(moody_friction)
+        results["ftp_fn"].append(friction_factor/moody_friction)
+        results["dp_grav"].append(grav_pressure_gradient)
+        results["dp_fric"].append(fric_pressure_gradient)
     return results
 
 
@@ -415,6 +500,28 @@ def expected_answers():
     answers["alpha_dist"] = [
         0.501163698847922, 0.728120216442387, 0.928501833186807, 1., 1., 1., 1.
     ]
+    answers["n_re"] = [
+        11303.2719423257, 9331.16182613241, 6377.46183950293, 4767.93954013749,
+        3886.99890720668, 303.538772330867, 239.117244836072
+    ]
+    answers["f_n"] = [
+        0.0315981341515841, 0.0330847388475963, 0.0364849713769,
+        0.0395497578694166, 0.0419685286859213, 0.210846210876276,
+        0.267651126726036
+    ]
+    answers["ftp_fn"] = [
+        1.44285834982483, 1.44128142170068, 1.43818299356602, 1, 1, 1, 1
+    ]
+    answers["dp_grav"] = [
+        -0.195860358694611, -0.218172248441688, -0.273355531374995,
+        -0.371351065551574, -0.37466212183454, -0.375045239265508,
+        -0.375053534862387
+    ]
+    answers["dp_fric"] = [
+        -0.0143839875404616, -0.0123652766188966, -0.00915353193836248,
+        -0.00493117028077515, -0.00518650499949317, -0.0260299293127166,
+        -0.033042025191692
+    ]
     return answers
 
 
@@ -502,3 +609,23 @@ def test_liquid_holdup_with_incl(input, expected_answers, correlation_results):
     assert correlation_results["alpha_seg"] == pytest.approx(expected_answers["alpha_seg"], 1e-3)
     assert correlation_results["alpha_int"] == pytest.approx(expected_answers["alpha_int"], 1e-3)
     assert correlation_results["alpha_dist"] == pytest.approx(expected_answers["alpha_dist"], 1e-3)
+
+
+def test_reynolds(input, expected_answers, correlation_results):
+    assert correlation_results["n_re"] == pytest.approx(expected_answers["n_re"])
+
+
+def test_moody_friction(input, expected_answers, correlation_results):
+    assert correlation_results["f_n"] == pytest.approx(expected_answers["f_n"])
+
+
+def test_friction_factor(input, expected_answers, correlation_results):
+    assert correlation_results["ftp_fn"] == pytest.approx(expected_answers["ftp_fn"], 1e-5)
+
+
+def test_grav_pressure_gradient(input, expected_answers, correlation_results):
+    assert correlation_results["dp_grav"] == pytest.approx(expected_answers["dp_grav"], 1e-4)
+
+
+def test_fric_pressure_gradient(input, expected_answers, correlation_results):
+    assert correlation_results["dp_fric"] == pytest.approx(expected_answers["dp_fric"], 1e-5)
