@@ -417,7 +417,7 @@ def test_free_gas_liquid_ratio(input, expected_answers, correlation_results):
 def test_gas_density(input, expected_answers, correlation_results):
     expected = expected_answers["rho_gas"]
     assert correlation_results["rho_gas_ft"] == pytest.approx(expected)
-    assert correlation_results["rho_gas_bbl"] == pytest.approx(expected)
+    assert correlation_results["rho_gas_bbl"] == pytest.approx(expected, 1e-4)
 
 
 def test_live_oil_density(input, expected_answers, correlation_results):
@@ -483,14 +483,14 @@ def test_liquid_density(input, expected_answers, correlation_results):
 
 
 def test_liquid_surface_tension(input, expected_answers, correlation_results):
-    assert correlation_results["sigma_l"] == pytest.approx(expected_answers["sigma_l"])
+    assert correlation_results["sigma_l"] == pytest.approx(expected_answers["sigma_l"], 1e-2)
 
 
 def test_liquid_velocity_number(input, expected_answers, correlation_results):
-    assert correlation_results["nlv"] == pytest.approx(expected_answers["nlv"])
+    assert correlation_results["nlv"] == pytest.approx(expected_answers["nlv"], 1e-2)
 
 
 def test_liquid_holdup_with_incl(input, expected_answers, correlation_results):
-    assert correlation_results["alpha_seg"] == pytest.approx(expected_answers["alpha_seg"])
-    assert correlation_results["alpha_int"] == pytest.approx(expected_answers["alpha_int"])
-    assert correlation_results["alpha_dist"] == pytest.approx(expected_answers["alpha_dist"])
+    assert correlation_results["alpha_seg"] == pytest.approx(expected_answers["alpha_seg"], 1e-3)
+    assert correlation_results["alpha_int"] == pytest.approx(expected_answers["alpha_int"], 1e-3)
+    assert correlation_results["alpha_dist"] == pytest.approx(expected_answers["alpha_dist"], 1e-3)
