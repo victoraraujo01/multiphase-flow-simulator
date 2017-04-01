@@ -511,7 +511,8 @@ def liquid_velocity_number(_liquid_superficial_velocity,
     )
 
 
-def liquid_holdup_with_incl(_flow_pattern,
+def liquid_holdup_with_incl(_horz_liquid_holdup,
+                            _flow_pattern,
                             _froude_number,
                             _no_slip_liquid_fraction,
                             _liquid_velocity_number,
@@ -532,16 +533,11 @@ def liquid_holdup_with_incl(_flow_pattern,
     Returns:
         The liquid fraction considering slippage for any inclination.
     """
-    _horz_liquid_holdup = horz_liquid_holdup(
-        _flow_pattern,
-        _froude_number,
-        _no_slip_liquid_fraction
-    )
-
     constants = {
         FlowPattern.segregated:   (0.011, -3.7680, 3.5390, -1.6140),
         FlowPattern.intermittent: (2.960, 0.3050, -0.4473, 0.0978),
-        FlowPattern.distributed:  (0.0, 0.0, 0.0, 0.0),
+        FlowPattern.distributed:  (1.0, 1.0, 1.0, 1.0),
+        FlowPattern.transition:  (1.0, 1.0, 1.0, 1.0),
         FlowPattern.downward:     (4.700, -0.3692, 0.1244, -0.5056)
     }
 
@@ -557,7 +553,8 @@ def liquid_holdup_with_incl(_flow_pattern,
             _froude_number ** term_g
         )
     ))
-    if _flow_pattern == FlowPattern.distributed:
+    if (_flow_pattern == FlowPattern.distributed or
+            _flow_pattern == FlowPattern.transition):
         c_parameter = 0
 
     phi_parameter = (
