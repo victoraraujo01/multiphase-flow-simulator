@@ -4,10 +4,9 @@ from helpers import specific_gravity_from_api
 
 class Oil(object):
     """Class that represents the oil phase"""
-    def __init__(self, api_gravity, bubble_point, dissolved_gas):
+    def __init__(self, api_gravity, dissolved_gas):
         super(Oil, self).__init__()
         self.api_gravity = api_gravity
-        self.bubble_point = bubble_point
         self.gas = dissolved_gas
         self.gas_solubility = None
         self.compressibility = None
@@ -26,26 +25,36 @@ class Oil(object):
         """
         return specific_gravity_from_api(self.api_gravity)
 
-    def update_conditions(self, pressure, temperature, water_cut):
-        self.gas_solubility = self._calc_gas_solubility(pressure, temperature)
-        if pressure >= self.bubble_point:
-            self.compressibility = self._calc_compressibility(
-                pressure, temperature
+    def update_conditions(self,
+                          pressure,
+                          bubble_point,
+                          temperature,
+                          water_cut):
+        self.gas_solubility = self.calc_gas_solubility(
+            pressure, bubble_point, temperature
+        )
+        if pressure >= bubble_point:
+            self.compressibility = self.calc_compressibility(
+                pressure, bubble_point, temperature
             )
-        self.formation_volume_factor = self._calc_formation_volume_factor(
-            pressure, temperature, self.gas_solubility, self.compressibility
+        self.formation_volume_factor = self.calc_formation_volume_factor(
+            pressure,
+            bubble_point,
+            temperature,
+            self.gas_solubility,
+            self.compressibility
         )
-        self.viscosity = self._calc_viscosity(
-            pressure, temperature, self.gas_solubility
+        self.viscosity = self.calc_viscosity(
+            pressure, bubble_point, temperature, self.gas_solubility
         )
-        self.density = self._calc_density(
+        self.density = self.calc_density(
             self.gas_solubility, self.formation_volume_factor, water_cut
         )
-        self.oil_gas_surface_tension = self._calc_oil_gas_surf_tension(
+        self.oil_gas_surface_tension = self.calc_oil_gas_surf_tension(
             temperature, self.gas_solubility
         )
 
-    def _calc_gas_solubility(self, pressure, temperature):
+    def calc_gas_solubility(self, pressure, bubble_point, temperature):
         """
         Calculates gas solubility in oil (:math:`R_{so}`) using Standing's
         correlation. If pressure is higher than the mixture's bubble point,
@@ -60,8 +69,8 @@ class Oil(object):
         Returns:
             The gas solubility in oil, :math:`R_{so}` (:math:`scf/stb`).
         """
-        if pressure > self.bubble_point:
-            pressure = self.bubble_point
+        if pressure > bubble_point:
+            pressure = bubble_point
 
         exponent = 0.0125 * self.api_gravity - 0.00091 * temperature
         first_term = (pressure + 14.7)/18.2 + 1.4
@@ -71,7 +80,7 @@ class Oil(object):
         )
         return answer
 
-    def _calc_compressibility(self, pressure, temperature):
+    def calc_compressibility(self, pressure, bubble_point, temperature):
         """
         Calculates the isothermal oil compressibility using Vasquez
         correlation. This is the compressibility of the oil as a single-phase
@@ -88,11 +97,12 @@ class Oil(object):
             The compressibility of the oil as a single-phase liquid with a
             certain amount of gas in solution in :math:`psi^{-1}`.
         """
-        if pressure < self.bubble_point:
+        if pressure < bubble_point:
             raise ValueError('Pressure must be below bubble point.')
 
-        gas_solubility_in_oil_at_bp = self._calc_gas_solubility(
-            self.bubble_point,
+        gas_solubility_in_oil_at_bp = self.calc_gas_solubility(
+            bubble_point,
+            bubble_point,
             temperature
         )
 
@@ -104,11 +114,12 @@ class Oil(object):
         denominator = (pressure + 14.7) * (10 ** 5)
         return numerator/denominator
 
-    def _calc_formation_volume_factor(self,
-                                      pressure,
-                                      temperature,
-                                      gas_solubility_in_oil,
-                                      oil_compressibility=0.0):
+    def calc_formation_volume_factor(self,
+                                     pressure,
+                                     bubble_point,
+                                     temperature,
+                                     gas_solubility_in_oil,
+                                     oil_compressibility=0.0):
         """
         Calculates the oil formation volume factor (:math:`B_o`) using
         Standing's correlation. The bubble point is necessary because a
@@ -139,15 +150,15 @@ class Oil(object):
             1.25 * temperature
         ) ** 1.2)
 
-        if pressure > self.bubble_point:
+        if pressure > bubble_point:
             result = (
                 result *
-                math.exp(oil_compressibility * (self.bubble_point - pressure))
+                math.exp(oil_compressibility * (bubble_point - pressure))
             )
 
         return result
 
-    def _calc_dead_oil_viscosity(self, temperature):
+    def calc_dead_oil_viscosity(self, temperature):
         """
         Calculates the dead oil viscosity using the Beggs and Robinson
         correlation.
@@ -163,7 +174,11 @@ class Oil(object):
         dead_oil_viscosity = 10 ** term_x - 1
         return dead_oil_viscosity
 
-    def _calc_viscosity(self, pressure, temperature, gas_solubility_in_oil):
+    def calc_viscosity(self,
+                       pressure,
+                       bubble_point,
+                       temperature,
+                       gas_solubility_in_oil):
         """
         Calculates the live oil viscosity. If pressure is below bubble point,
         the Beggs and Robinson correlation will be used. Instead, if it is
@@ -181,7 +196,7 @@ class Oil(object):
         Returns:
             The live oil viscosity in :math:`cp`.
         """
-        dead_oil_viscosity = self._calc_dead_oil_viscosity(temperature)
+        dead_oil_viscosity = self.calc_dead_oil_viscosity(temperature)
 
         live_oil_viscosity = (
             10.715 *
@@ -190,10 +205,10 @@ class Oil(object):
             (5.44 * (gas_solubility_in_oil + 150) ** (-0.338))
         )
 
-        if pressure > self.bubble_point:
+        if pressure > bubble_point:
             live_oil_viscosity = (
                 live_oil_viscosity *
-                ((pressure + 14.7) / (self.bubble_point + 14.7)) ** (
+                ((pressure + 14.7) / (bubble_point + 14.7)) ** (
                     2.6 * (pressure + 14.7) ** 1.187 * math.exp(
                         -11.513 - 8.98e-5 * (pressure + 14.7)
                     )
@@ -202,7 +217,7 @@ class Oil(object):
 
         return live_oil_viscosity
 
-    def _calc_dead_density(self, in_cubic_feet=False):
+    def calc_dead_density(self, in_cubic_feet=False):
         """
         Calculates the dead oil density at standard conditions
 
@@ -219,10 +234,10 @@ class Oil(object):
             water_density = 350.0
         return water_density * self.specific_gravity
 
-    def _calc_density(self,
-                      gas_solubility_in_oil,
-                      oil_formation_volume_factor,
-                      water_cut):
+    def calc_density(self,
+                     gas_solubility_in_oil,
+                     oil_formation_volume_factor,
+                     water_cut):
         """
         Calculates the live oil density at the given conditions
 
@@ -245,7 +260,7 @@ class Oil(object):
         ))
         return density
 
-    def _calc_dead_oil_gas_surf_tension(self, temperature):
+    def calc_dead_oil_gas_surf_tension(self, temperature):
         """
         Calculates the dead oil - gas surface tension using Abdul-Majeed
         correlation (an update to Baker and Swerdloff's correlation). Source:
@@ -263,9 +278,9 @@ class Oil(object):
             (38.085 - 0.259 * self.api_gravity)
         )
 
-    def _calc_oil_gas_surf_tension(self,
-                                   temperature,
-                                   gas_solubility_in_oil):
+    def calc_oil_gas_surf_tension(self,
+                                  temperature,
+                                  gas_solubility_in_oil):
         """
         Corrects the dead oil - gas surface tension using Abdul-Majeed proposed
         method to obtain the surface tension between live oil and gas. Source:
@@ -278,7 +293,7 @@ class Oil(object):
         Returns:
             The oil - gas surface tension in :math:`dina/cm`
         """
-        dead_og_surf_tension = self._calc_dead_oil_gas_surf_tension(
+        dead_og_surf_tension = self.calc_dead_oil_gas_surf_tension(
             temperature
         )
         return dead_og_surf_tension * (

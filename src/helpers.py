@@ -12,63 +12,30 @@ def specific_gravity_from_api(api_gravity):
     return 141.5/(api_gravity + 131.5)
 
 
-def water_cut(_oil_flow_rate, _water_flow_rate):
-    """
-    Calculates the water cut based on the passed oil and water flow rates.
-    Supplied oil and water rates must be in the same unit.
-
-    Args:
-        oil_flow_rate: Current oil flow rate.
-        water_flow_rate: Current water flow rate.
-
-    Returns:
-        THe water cut ratio, known as WC or BSW (between 0 and 1).
-    """
-    return _water_flow_rate / (_oil_flow_rate + _water_flow_rate)
-
-
-def production_gas_liquid_ratio(_production_gas_oil_ratio, _water_cut):
-    """
-    Calculates the production gas liquid ratio based on the production gas oil
-    ratio and water cut. The calculated production gas liquid ratio will be on
-    the same unit as the gas oil ratio.
-
-    Args:
-        _production_gas_oil_ratio: Production gas oil ratio, :math:`RGO` (
-            suggested unit: :math:`scf/stb`).
-        _water_cut: Water cut.
-
-    Returns:
-        The production gas liquid ratio, :math:`RGL` (in the same unit as the
-        supplied :math:`RGO`).
-    """
-    return _production_gas_oil_ratio * (1 - _water_cut)
-
-
-def free_gas_liquid_ratio(_pressure,
-                          _bubble_point,
-                          _gas_solubility_in_oil,
-                          _gas_solubility_in_water,
+def free_gas_liquid_ratio(pressure,
+                          bubble_pnt,
+                          gas_solubility_in_oil,
+                          gas_solubility_in_water,
                           _water_cut,
-                          _production_gas_liquid_ratio):
+                          prod_gas_liquid_ratio):
     """
     Calculates the free gas liquid ratio.
 
     Args:
-        _pressure: Pressure at which the gas is (:math:`psig`). Note that this
+        pressure: Pressure at which the gas is (:math:`psig`). Note that this
             value is in :math:`psig`, so it is relative to the atmospheric
             pressure.
-        _bubble_point: Mixture's bubble point (:math:`psig`). Note that this
+        bubble_pnt: Mixture's bubble point (:math:`psig`). Note that this
             value is in :math:`psig`, so it is relative to the atmospheric
             pressure.
-        _gas_solubility_in_oil: Gas solubility in oil, :math:`R_{so}` (in the
+        gas_solubility_in_oil: Gas solubility in oil, :math:`R_{so}` (in the
             same unit as :math:`GLR_p` and :math:`R_{sw}`, suggestion:
             :math:`scf/stb`).
-        _gas_solubility_in_water: Gas solubility in water, :math:`R_{sw}` (in
+        gas_solubility_in_water: Gas solubility in water, :math:`R_{sw}` (in
             the same unit as :math:`GLR_p` and :math:`R_{so}`, suggestion:
             :math:`scf/stb`).
         _water_cut: Water cut, WC.
-        _production_gas_liquid_ratio: Production gas liquid ratio,
+        prod_gas_liquid_ratio: Production gas liquid ratio,
             :math:`GLR_p` (in the same unit as :math:`R_{so}` and
             :math:`R_{sw}`, suggestion: :math:`scf/stb`).
 
@@ -76,26 +43,22 @@ def free_gas_liquid_ratio(_pressure,
         The free gas liquid ratio if pressure is below bubble point. Otherwise,
         returns zero.
     """
-    if _pressure >= _bubble_point:
+    if pressure >= bubble_pnt:
         return 0
     else:
-        return (_production_gas_liquid_ratio -
-                _gas_solubility_in_oil * (1 - _water_cut) -
-                _gas_solubility_in_water * _water_cut)
+        return (prod_gas_liquid_ratio -
+                gas_solubility_in_oil * (1 - _water_cut) -
+                gas_solubility_in_water * _water_cut)
 
-# TODO: FIX
-def bubble_point(_temperature,
-                 _gas_specific_gravity,
-                 _oil_api_gravity,
-                 _water_cut,
-                 _production_gas_liquid_ratio):
+
+def bubble_point(temperature, oil, water, flow):
     """
     Calculates the mixture's bubble point based on the water cut and the
     prouction gas liquid ratio.
 
     Args:
         _water_cut: Water cut, WC.
-        _production_gas_liquid_ratio: Production gas liquid ratio,
+        prod_gas_liquid_ratio: Production gas liquid ratio,
             :math:`GLR_p` (in the same unit as :math:`R_{so}` and
             :math:`R_{sw}`, suggestion: :math:`scf/stb`).
 
@@ -108,24 +71,22 @@ def bubble_point(_temperature,
     error = 1.0
     while abs(error) > 1e-10:
         bubble_point_ = (pressure_low + pressure_high)/2
-        rso = self.gas.solubility_in_oil(bubble_point,
-                                         pressure_high,
-                                         _temperature,
-                                         _gas_specific_gravity,
-                                         _oil_api_gravity)
-        rsw = self.gas.solubility_in_water(bubble_point,
-                                           pressure_high,
-                                           _temperature)
+        rso = oil.calc_gas_solubility(bubble_point_,
+                                      pressure_high,
+                                      temperature)
+        rsw = water.calc_gas_solubility(bubble_point_,
+                                        pressure_high,
+                                        temperature)
 
-        error = (_production_gas_liquid_ratio -
-                 (1 - _water_cut) * rso - _water_cut * rsw)
+        error = (flow.prod_gas_liquid_ratio -
+                 (1 - flow.water_cut) * rso - flow.water_cut * rsw)
 
         if error > 0.0:
             pressure_low = bubble_point_
         else:
             pressure_high = bubble_point_
 
-    return bubble_point
+    return bubble_point_
 
 
 def no_slip_fraction(fluid_velocity, total_velocity):

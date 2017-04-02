@@ -3,10 +3,9 @@ import math
 
 class Water(object):
     """docstring for Water"""
-    def __init__(self, specific_gravity, bubble_point, dissolved_gas):
+    def __init__(self, specific_gravity, dissolved_gas):
         super(Water, self).__init__()
         self.specific_gravity = specific_gravity
-        self.bubble_point = bubble_point
         self.gas = dissolved_gas
         self.gas_solubility = None
         self.compressibility = None
@@ -15,24 +14,30 @@ class Water(object):
         self.density = None
         self.water_gas_surface_tension = None
 
-    def update_conditions(self, pressure, temperature, water_cut):
-        self.gas_solubility = self._calc_gas_solubility(pressure, temperature)
-        if pressure >= self.bubble_point:
-            self.compressibility = self._calc_compressibility(
-                pressure, temperature
-            )
-        self.formation_volume_factor = self._calc_formation_volume_factor(
-            pressure, temperature, self.compressibility
+    def update_conditions(self,
+                          pressure,
+                          bubble_point,
+                          temperature,
+                          water_cut):
+        self.gas_solubility = self.calc_gas_solubility(
+            pressure, bubble_point, temperature
         )
-        self.viscosity = self._calc_viscosity(
+        if pressure >= bubble_point:
+            self.compressibility = self.calc_compressibility(
+                pressure, bubble_point, temperature
+            )
+        self.formation_volume_factor = self.calc_formation_volume_factor(
+            pressure, bubble_point, temperature, self.compressibility
+        )
+        self.viscosity = self.calc_viscosity(
             pressure, temperature
         )
-        self.density = self._calc_density(
+        self.density = self.calc_density(
             self.gas_solubility, self.formation_volume_factor, water_cut
         )
-        self.water_gas_surface_tension = self._calc_water_gas_surf_tension()
+        self.water_gas_surface_tension = self.calc_water_gas_surf_tension()
 
-    def _calc_gas_solubility(self, pressure, temperature):
+    def calc_gas_solubility(self, pressure, bubble_point, temperature):
         """
         Calculates gas solubility in water (:math:`R_{sw}`) using Culberson and
         Maketta correlation. If pressure is higher than the mixture's bubble
@@ -63,13 +68,13 @@ class Water(object):
                   2.34122e-6 * (temperature ** 3) -
                   2.37049e-9 * (temperature ** 4)) * (10 ** -7)
 
-        if pressure > self.bubble_point:
-            pressure = self.bubble_point
+        if pressure > bubble_point:
+            pressure = bubble_point
 
         abs_pressure = pressure + 14.7
         return term_a + term_b * (abs_pressure) + term_c * (abs_pressure) ** 2
 
-    def _calc_compressibility(self, pressure, temperature):
+    def calc_compressibility(self, pressure, bubble_point, temperature):
         """
         Calculates the isothermal water compressibility using Dodson and
         Standing correlation. This is the compressibility of the water as a
@@ -86,11 +91,12 @@ class Water(object):
             The compressibility of the water as a single-phase liquid with a
             certain amount of gas in solution in :math:`psi^{-1}`.
         """
-        if pressure < self.bubble_point:
+        if pressure < bubble_point:
             raise ValueError('Pressure must be below bubble point.')
 
-        gas_solubility_in_water_at_bp = self._calc_gas_solubility(
-            self.bubble_point,
+        gas_solubility_in_water_at_bp = self.calc_gas_solubility(
+            bubble_point,
+            bubble_point,
             temperature
         )
 
@@ -104,10 +110,11 @@ class Water(object):
         )
         return result
 
-    def _calc_formation_volume_factor(self,
-                                      pressure,
-                                      temperature,
-                                      water_compressibility=0.0):
+    def calc_formation_volume_factor(self,
+                                     pressure,
+                                     bubble_point,
+                                     temperature,
+                                     water_compressibility=0.0):
         """
         Calculates the water formation volume factor (:math:`B_w`) using
         Gould's correlation. The bubble point is necessary because a different
@@ -130,16 +137,16 @@ class Water(object):
                   1.2e-4 * (temperature - 60) +
                   1.0e-6 * (temperature - 60) ** 2)
 
-        if pressure >= self.bubble_point:
-            result = result - 3.33e-6 * (self.bubble_point + 14.7)
+        if pressure >= bubble_point:
+            result = result - 3.33e-6 * (bubble_point + 14.7)
             result = (result * math.exp(water_compressibility *
-                                        (self.bubble_point - pressure)))
+                                        (bubble_point - pressure)))
         else:
             result = result - 3.33e-6 * (pressure + 14.7)
 
         return result
 
-    def _calc_viscosity(self, pressure, temperature):
+    def calc_viscosity(self, pressure, temperature):
         """
         Calculates the water viscosity using the Kestin, Khalifa and Correa
         correlation.
@@ -161,10 +168,10 @@ class Water(object):
         )
         return viscosity
 
-    def _calc_density(self,
-                      gas_solubility_in_water,
-                      water_formation_volume_factor,
-                      water_cut):
+    def calc_density(self,
+                     gas_solubility_in_water,
+                     water_formation_volume_factor,
+                     water_cut):
         """
         Calculates the live water density at the given conditions
 
@@ -189,7 +196,7 @@ class Water(object):
         )
         return density
 
-    def _calc_water_gas_surf_tension(self):
+    def calc_water_gas_surf_tension(self):
         """
         Returns the water - gas surface tension. Currently there is no
         correlation implemented for this property.

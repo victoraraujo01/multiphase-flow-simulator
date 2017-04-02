@@ -22,10 +22,10 @@ class Flow(object):
         self.grav_pressure_gradient = 0
         self.fric_pressure_gradient = 0
 
-    def update_conditions(self, pressure, gas, oil, water):
+    def update_conditions(self, pressure, bubble_point, gas, oil, water):
         free_glr = free_gas_liquid_ratio(
             pressure,
-            oil.bubble_point,
+            bubble_point,
             oil.gas_solubility,
             water.gas_solubility,
             self.water_cut,

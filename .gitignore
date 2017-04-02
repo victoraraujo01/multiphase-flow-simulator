@@ -91,3 +91,5 @@ ENV/
 
 # Other
 assets/
+*.sublime-project
+*.sublime-workspace

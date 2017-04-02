@@ -12,16 +12,16 @@ class Gas(object):
         self.viscosity = None
 
     def update_conditions(self, pressure, temperature):
-        self.deviation_factor = self._calc_deviation_factor(
+        self.deviation_factor = self.calc_deviation_factor(
             pressure, temperature
         )
-        self.formation_volume_factor = self._calc_formation_volume_factor(
+        self.formation_volume_factor = self.calc_formation_volume_factor(
             pressure, temperature, self.deviation_factor, False
         )
-        self.density = self._calc_density(self.formation_volume_factor)
-        self.viscosity = self._calc_viscosity(temperature, self.density)
+        self.density = self.calc_density(self.formation_volume_factor)
+        self.viscosity = self.calc_viscosity(temperature, self.density)
 
-    def _calc_deviation_factor(self, pressure, temperature):
+    def calc_deviation_factor(self, pressure, temperature):
         """
         Calculates the gas deviation factor or compressibility factor :math:`Z`
         using Papay's correlation.
@@ -54,11 +54,11 @@ class Gas(object):
                             (0.3675 - 0.04188423 * pseudo_reduced_ratio))
         return deviation_factor
 
-    def _calc_formation_volume_factor(self,
-                                      pressure,
-                                      temperature,
-                                      deviation_factor,
-                                      in_cubic_feet=True):
+    def calc_formation_volume_factor(self,
+                                     pressure,
+                                     temperature,
+                                     deviation_factor,
+                                     in_cubic_feet=True):
         """
         Calculates the gas formation volume factor. This is a convenience
         method that uses the gas specific gravity to calculate the gas
@@ -77,7 +77,7 @@ class Gas(object):
         Returns:
             The gas formation volume factor.
         """
-        deviation_factor_std = self._calc_deviation_factor(0, 60.0)
+        deviation_factor_std = self.calc_deviation_factor(0, 60.0)
 
         conversion_factor = 0.028269
         if not in_cubic_feet:
@@ -91,9 +91,9 @@ class Gas(object):
 
         return gas_formation_volume_factor
 
-    def _calc_density(self,
-                      gas_formation_volume_factor=1.0,
-                      bg_in_cubic_feet=True):
+    def calc_density(self,
+                     gas_formation_volume_factor=1.0,
+                     bg_in_cubic_feet=True):
         """
         Calculates the gas density at standard conditions (if no gas formation
         volume factor, :math:`B_g`, is given) or uses the given :math:`B_g` to
@@ -120,7 +120,7 @@ class Gas(object):
                    gas_formation_volume_factor)
         return density
 
-    def _calc_viscosity(self, temperature, gas_density):
+    def calc_viscosity(self, temperature, gas_density):
         """
         Calculates the gas viscosity using the Lee et al. correlation.
 
