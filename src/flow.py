@@ -412,7 +412,7 @@ class Flow(object):
                               liquid_holdup,
                               moody_friction_factor):
         term_y = no_slip_liquid_fraction / (liquid_holdup ** 2)
-        term_s = math.log(2.2 * term_y - 1.2)
+        term_s = 0.0
         if term_y < 1.0 or term_y > 1.2:
             term_s = (
                 math.log(term_y) /
@@ -423,6 +423,8 @@ class Flow(object):
                     0.01853 * (math.log(term_y) ** 4)
                 )
             )
+        else:
+            math.log(2.2 * term_y - 1.2)
         return moody_friction_factor * math.exp(term_s)
 
     def _calc_fric_pressure_gradient(self,
