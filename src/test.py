@@ -4,25 +4,29 @@ import matplotlib.pyplot as plt
 from oil import Oil
 from water import Water
 from gas import Gas
-from flow import Flow
+from mixture import Mixture
+from beggs_and_brill import BeggsAndBrill
 from tubing import Tubing
 import helpers
 
 well_head_pressure = 150.0
 temperature = 170.0
 
+prod_glr = 600.0
+water_cut = 0.0
+
 x = []
 y = []
 
 for flow_rate in np.arange(1, 1000, 10):
-    print(flow_rate)
     tubing = Tubing(10000, 1.995, 90.0, 0.00015)
     gas = Gas(0.7)
     oil = Oil(25.0, gas)
     water = Water(1.07, gas)
-    flow = Flow(flow_rate, 600.0, 0, tubing)
+    mixture = Mixture(gas, oil, water, water_cut, prod_glr, flow_rate)
+    correlation = BeggsAndBrill()
 
-    bubble_point = helpers.bubble_point(temperature, oil, water, flow)
+    bubble_point = helpers.bubble_point(temperature, mixture)
 
     last_pressure = 0.0
     pressure = well_head_pressure
@@ -34,11 +38,12 @@ for flow_rate in np.arange(1, 1000, 10):
     limit = 10.0
     while depth < tubing.length:
         gas.update_conditions(pressure, temperature)
-        oil.update_conditions(pressure, bubble_point, temperature, flow.water_cut)
-        water.update_conditions(pressure, bubble_point, temperature, flow.water_cut)
-        flow.update_conditions(pressure, bubble_point, gas, oil, water)
+        oil.update_conditions(pressure, bubble_point, temperature, mixture.water_cut)
+        water.update_conditions(pressure, bubble_point, temperature, mixture.water_cut)
+        mixture.update_conditions(pressure, bubble_point, tubing.diameter)
+        correlation.update_conditions(mixture, tubing)
 
-        dp_dz = flow.grav_pressure_gradient + flow.fric_pressure_gradient
+        dp_dz = correlation.grav_pressure_gradient + correlation.fric_pressure_gradient
         last_depth = depth
         depth = depth + delta_p / abs(dp_dz)
 

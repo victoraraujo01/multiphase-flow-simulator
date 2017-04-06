@@ -1,6 +1,3 @@
-import math
-
-
 def density_to_specific_gravity(_density):
     return _density / 62.4
 
@@ -9,7 +6,7 @@ def specific_gravity_from_api(api_gravity):
     """
     Converts the oil's API gravity to specific gravity.
     """
-    return 141.5/(api_gravity + 131.5)
+    return 141.5 / (api_gravity + 131.5)
 
 
 def free_gas_liquid_ratio(pressure,
@@ -51,7 +48,7 @@ def free_gas_liquid_ratio(pressure,
                 gas_solubility_in_water * _water_cut)
 
 
-def bubble_point(temperature, oil, water, flow):
+def bubble_point(temperature, mixture):
     """
     Calculates the mixture's bubble point based on the water cut and the
     prouction gas liquid ratio.
@@ -70,16 +67,16 @@ def bubble_point(temperature, oil, water, flow):
     bubble_point_ = 0.0
     error = 1.0
     while abs(error) > 1e-10:
-        bubble_point_ = (pressure_low + pressure_high)/2
-        rso = oil.calc_gas_solubility(bubble_point_,
-                                      pressure_high,
-                                      temperature)
-        rsw = water.calc_gas_solubility(bubble_point_,
-                                        pressure_high,
-                                        temperature)
+        bubble_point_ = (pressure_low + pressure_high) / 2
+        rso = mixture.oil.calc_gas_solubility(bubble_point_,
+                                              pressure_high,
+                                              temperature)
+        rsw = mixture.water.calc_gas_solubility(bubble_point_,
+                                                pressure_high,
+                                                temperature)
 
-        error = (flow.prod_gas_liquid_ratio -
-                 (1 - flow.water_cut) * rso - flow.water_cut * rsw)
+        error = (mixture.prod_gas_liquid_ratio -
+                 (1 - mixture.water_cut) * rso - mixture.water_cut * rsw)
 
         if error > 0.0:
             pressure_low = bubble_point_

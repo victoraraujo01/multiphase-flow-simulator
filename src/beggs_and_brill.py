@@ -19,104 +19,31 @@ LIQUID_HOLDUP_CONSTANTS = {
 }
 
 
-class Flow(object):
+class BeggsAndBrill(object):
     """docstring for Flow"""
-    def __init__(self,
-                 prod_flow_rate,
-                 prod_gas_liquid_ratio,
-                 water_cut,
-                 tubing):
-        super(Flow, self).__init__()
-        self.prod_flow_rate = prod_flow_rate
-        self.prod_gas_liquid_ratio = prod_gas_liquid_ratio
-        self.water_cut = water_cut
-        self.tubing = tubing
-
+    def __init__(self):
+        super(BeggsAndBrill, self).__init__()
         self.grav_pressure_gradient = 0
         self.fric_pressure_gradient = 0
 
-    def update_conditions(self, pressure, bubble_point, gas, oil, water):
-        free_glr = free_gas_liquid_ratio(
-            pressure,
-            bubble_point,
-            oil.gas_solubility,
-            water.gas_solubility,
-            self.water_cut,
-            self.prod_gas_liquid_ratio
-        )
-        gas_flow_rate = self.in_situ_flow_rate(
-            gas.formation_volume_factor, free_glr
-        )
-        oil_flow_rate = self.in_situ_flow_rate(
-            oil.formation_volume_factor, (1 - self.water_cut)
-        )
-        water_flow_rate = self.in_situ_flow_rate(
-            water.formation_volume_factor, self.water_cut
-        )
-        gas_velocity = self.superficial_velocity(gas_flow_rate)
-        oil_velocity = self.superficial_velocity(oil_flow_rate)
-        water_velocity = self.superficial_velocity(water_flow_rate)
-        liquid_velocity = oil_velocity + water_velocity
-        mixture_velocity = gas_velocity + liquid_velocity
-
-        no_slip_liquid_fraction = no_slip_fraction(
-            liquid_velocity,
-            mixture_velocity
-        )
-        water_fraction = no_slip_fraction(
-            water_velocity,
-            liquid_velocity
-        )
-
-        liquid_density = estimate_fluid_property(
-            oil.density,
-            water.density,
-            water_fraction
-        )
-        liquid_surface_tension = estimate_fluid_property(
-            oil.oil_gas_surface_tension,
-            water.water_gas_surface_tension,
-            water_fraction
-        )
-        liquid_viscosity = estimate_fluid_property(
-            oil.viscosity,
-            water.viscosity,
-            water_fraction
-        )
-
-        mixture_viscosity_no_slip = estimate_fluid_property(
-            liquid_viscosity,
-            gas.viscosity,
-            (1 - no_slip_liquid_fraction)
-        )
-        mixture_density_no_slip = estimate_fluid_property(
-            liquid_density,
-            gas.density,
-            (1 - no_slip_liquid_fraction)
-        )
-        mixture_specific_grav_no_slip = density_to_specific_gravity(
-            mixture_density_no_slip
-        )
-
-        froude_number = self._calc_froude_number(mixture_velocity)
-        flow_pattern = self._calc_flow_pattern(
-            froude_number, no_slip_liquid_fraction
-        )
+    def update_conditions(self, mixture, tubing):
+        froude_number = self._calc_froude_number(mixture.mixture_velocity, tubing.diameter)
+        flow_pattern = self._calc_flow_pattern(froude_number, mixture.no_slip_liquid_fraction)
         liquid_velocity_number = self._calc_liquid_velocity_number(
-            liquid_velocity,
-            liquid_density,
-            liquid_surface_tension
+            mixture.liquid_velocity,
+            mixture.liquid_density,
+            mixture.liquid_surface_tension
         )
         liquid_holdup = self._calc_liquid_holdup_with_incl(
             flow_pattern,
             froude_number,
-            no_slip_liquid_fraction,
+            mixture.no_slip_liquid_fraction,
             liquid_velocity_number,
-            self.tubing.inclination
+            tubing.inclination
         )
         mixture_density_holdup = estimate_fluid_property(
-            liquid_density,
-            gas.density,
+            mixture.liquid_density,
+            mixture.gas.density,
             (1 - liquid_holdup)
         )
         mixture_specific_grav_holdup = density_to_specific_gravity(
@@ -124,69 +51,30 @@ class Flow(object):
         )
 
         reynolds = self._calc_reynolds(
-            mixture_density_no_slip,
-            mixture_velocity,
-            self.tubing.diameter,
-            mixture_viscosity_no_slip
+            mixture.mixture_density_no_slip,
+            mixture.mixture_velocity,
+            tubing.diameter,
+            mixture.mixture_viscosity_no_slip
         )
-        moody_friction = self._calc_moody_friction_factor(
-            reynolds,
-            self.tubing.rugosity
-        )
+        moody_friction = self._calc_moody_friction_factor(reynolds, tubing.rugosity)
         friction_factor = self._calc_friction_factor(
-            no_slip_liquid_fraction,
+            mixture.no_slip_liquid_fraction,
             liquid_holdup,
             moody_friction
         )
+
         self.grav_pressure_gradient = self._calc_grav_pressure_gradient(
             mixture_specific_grav_holdup,
-            self.tubing.inclination
+            tubing.inclination
         )
         self.fric_pressure_gradient = self._calc_fric_pressure_gradient(
             friction_factor,
-            mixture_specific_grav_no_slip,
-            mixture_velocity,
-            self.tubing.diameter
+            mixture.mixture_specific_grav_no_slip,
+            mixture.mixture_velocity,
+            tubing.diameter
         )
 
-    def in_situ_flow_rate(self, formation_volume_factor, fraction):
-        """
-        Calculates the in-situ gas flow rate at the given conditions
-
-        Args:
-            _liquid_flow_rate (double): Total liquid flow rate (:math:`bpd`).
-            _gas_formation_volume_factor (double): Gas formation volume factor,
-                :math:`B_g` (:math:`bbl/scf`). Pay attention to the unit used.
-            _free_gas_liquid_ratio (double): The free gas liquid ratio
-                (:math:`scf/stb`).
-
-        Returns:
-            The in-situ gas flow rate in :math:`ft^3/s`.
-        """
-        answer = (
-            fraction * self.prod_flow_rate * formation_volume_factor *
-            0.000064984  # reduced 5.614583 / 86400 to improve speed
-        )
-        return answer
-
-    def superficial_velocity(self, in_situ_flow_rate):
-        """
-        Transforms the passed in-situ flow rate into superficial velocity at
-        the given diameter.
-
-        Args:
-            in_situ_flow_rate (double): In situ flow rate (:math:`ft^3/s`).
-            diameter (double): The tubing diameter (:math:`in`).
-
-        Returns:
-            The superficial velocity in :math:`ft/s`.
-        """
-        return (
-            4 * in_situ_flow_rate /
-            (math.pi * (self.tubing.diameter / 12) ** 2)
-        )
-
-    def _calc_froude_number(self, mixture_velocity):
+    def _calc_froude_number(self, mixture_velocity, tubing_diameter):
         """
         Calculates the mixture Froude number based on the mixture velocity (sum
         of all phases respective superficial velocities) and the tubing
@@ -200,7 +88,7 @@ class Flow(object):
         Returns:
             THe Froude number.
         """
-        return (mixture_velocity ** 2) / (32.174 * self.tubing.diameter / 12)
+        return (mixture_velocity ** 2) / (32.174 * tubing_diameter / 12)
 
     def _calc_transition_froude_numbers(self, no_slip_liquid_fraction):
         """
