@@ -341,11 +341,12 @@ class Flow(object):
                     0.333 * (math.sin(1.8 * inclination_rad) ** 3)
                 )
             )
+            payne_factor = 0.924 if inclination > 0 else 0.685
             max_value = no_slip_liquid_fraction if inclination < 0 else 1
             min_value = no_slip_liquid_fraction if inclination >= 0 else 0
             return max(
                 min_value,
-                min(max_value, horz_liquid_holdup * phi_parameter)
+                min(max_value, payne_factor * horz_liquid_holdup * phi_parameter)
             )
         else:
             _, fr2, fr3, _ = self._calc_transition_froude_numbers(
