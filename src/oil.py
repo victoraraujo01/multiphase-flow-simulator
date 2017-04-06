@@ -128,7 +128,7 @@ class Oil(object):
                                      bubble_point,
                                      temperature,
                                      gas_solubility_in_oil,
-                                     oil_compressibility=0.0):
+                                     oil_compressibility):
         """
         Calculates the oil formation volume factor (:math:`B_o`) using
         Standing's correlation. The bubble point is necessary because a
@@ -147,8 +147,7 @@ class Oil(object):
                 bubble point, the gas solubility in oil supplied must be the
                 one at the bubble point (:math:`R_{sob}`).**
             oil_compressibility (double, optional): Oil's compressibility
-                (:math:`psi^{-1}`). Value can be omitted if pressure is below
-                bubble point.
+                (:math:`psi^{-1}`).
 
         Returns:
             The oil formation volume factor, in :math:`bbl/stb`.
@@ -226,7 +225,7 @@ class Oil(object):
 
         return live_oil_viscosity
 
-    def calc_dead_density(self, in_cubic_feet=False):
+    def calc_dead_density(self, in_cubic_feet=True):
         """
         Calculates the dead oil density at standard conditions
 
