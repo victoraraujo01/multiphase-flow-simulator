@@ -18,7 +18,7 @@ class Gas(object):
         self.formation_volume_factor = self.calc_formation_volume_factor(
             pressure, temperature, self.deviation_factor, False
         )
-        self.density = self.calc_density(self.formation_volume_factor)
+        self.density = self.calc_density(self.formation_volume_factor, False)
         self.viscosity = self.calc_viscosity(temperature, self.density)
 
     def calc_deviation_factor(self, pressure, temperature):
