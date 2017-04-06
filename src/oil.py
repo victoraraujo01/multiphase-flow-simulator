@@ -9,6 +9,7 @@ class Oil(object):
         self.api_gravity = api_gravity
         self.gas = dissolved_gas
         self.gas_solubility = None
+        self.gas_solubility_in_oil_at_bp = None
         self.compressibility = None
         self.formation_volume_factor = None
         self.viscosity = None
@@ -30,12 +31,22 @@ class Oil(object):
                           bubble_point,
                           temperature,
                           water_cut):
+        if self.gas_solubility_in_oil_at_bp is None:
+            self.gas_solubility_in_oil_at_bp = self.calc_gas_solubility(
+                bubble_point,
+                bubble_point,
+                temperature
+            )
+
         self.gas_solubility = self.calc_gas_solubility(
             pressure, bubble_point, temperature
         )
         if pressure >= bubble_point:
             self.compressibility = self.calc_compressibility(
-                pressure, bubble_point, temperature
+                pressure,
+                bubble_point,
+                temperature,
+                self.gas_solubility_in_oil_at_bp
             )
         self.formation_volume_factor = self.calc_formation_volume_factor(
             pressure,
@@ -80,7 +91,11 @@ class Oil(object):
         )
         return answer
 
-    def calc_compressibility(self, pressure, bubble_point, temperature):
+    def calc_compressibility(self,
+                             pressure,
+                             bubble_point,
+                             temperature,
+                             gas_solubility_in_oil_at_bp):
         """
         Calculates the isothermal oil compressibility using Vasquez
         correlation. This is the compressibility of the oil as a single-phase
@@ -99,12 +114,6 @@ class Oil(object):
         """
         if pressure < bubble_point:
             raise ValueError('Pressure must be below bubble point.')
-
-        gas_solubility_in_oil_at_bp = self.calc_gas_solubility(
-            bubble_point,
-            bubble_point,
-            temperature
-        )
 
         numerator = (-1433 +
                      5 * gas_solubility_in_oil_at_bp +
