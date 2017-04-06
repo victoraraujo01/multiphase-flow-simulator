@@ -5,6 +5,19 @@ from helpers import density_to_specific_gravity
 from helpers import estimate_fluid_property
 from flowpattern import FlowPattern
 
+HORZ_LIQUID_HOLDUP_CONSTANTS = {
+    FlowPattern.segregated:   (0.980, 0.4846, 0.0868),
+    FlowPattern.intermittent: (0.845, 0.5351, 0.0173),
+    FlowPattern.distributed:  (1.065, 0.5824, 0.0609)
+}
+
+LIQUID_HOLDUP_CONSTANTS = {
+    FlowPattern.segregated:   (0.011, -3.7680, 3.5390, -1.6140),
+    FlowPattern.intermittent: (2.960, 0.3050, -0.4473, 0.0978),
+    FlowPattern.distributed:  (1.0, 1.0, 1.0, 1.0),
+    FlowPattern.downward:     (4.700, -0.3692, 0.1244, -0.5056)
+}
+
 
 class Flow(object):
     """docstring for Flow"""
@@ -88,25 +101,18 @@ class Flow(object):
         flow_pattern = self._calc_flow_pattern(
             froude_number, no_slip_liquid_fraction
         )
-        horz_liquid_holdup = self._calc_horz_liquid_holdup(
-            flow_pattern,
-            froude_number,
-            no_slip_liquid_fraction
-        )
         liquid_velocity_number = self._calc_liquid_velocity_number(
             liquid_velocity,
             liquid_density,
             liquid_surface_tension
         )
         liquid_holdup = self._calc_liquid_holdup_with_incl(
-            horz_liquid_holdup,
             flow_pattern,
             froude_number,
             no_slip_liquid_fraction,
             liquid_velocity_number,
             self.tubing.inclination
         )
-
         mixture_density_holdup = estimate_fluid_property(
             liquid_density,
             gas.density,
@@ -158,7 +164,7 @@ class Flow(object):
         """
         answer = (
             fraction * self.prod_flow_rate * formation_volume_factor *
-            5.614583 / 86400
+            0.000064984  # reduced 5.614583 / 86400 to improve speed
         )
         return answer
 
@@ -228,7 +234,7 @@ class Flow(object):
         fr1, fr2, fr3, fr4 = self._calc_transition_froude_numbers(
             no_slip_liquid_fraction
         )
-        if froude_number > fr1 or froude_number > fr4:
+        if froude_number >= fr1 or froude_number >= fr4:
             return FlowPattern.distributed
         elif froude_number > fr3:
             return FlowPattern.intermittent
@@ -253,40 +259,12 @@ class Flow(object):
         Returns:
             The liquid fraction considering slippage for horizontal flow.
         """
-        constants = {
-            FlowPattern.segregated:   (0.980, 0.4846, 0.0868),
-            FlowPattern.intermittent: (0.845, 0.5351, 0.0173),
-            FlowPattern.distributed:  (1.065, 0.5824, 0.0609)
-        }
-        if flow_pattern != FlowPattern.transition:
-            term_a, term_b, term_c = constants[flow_pattern]
-            answer = (
-                term_a *
-                no_slip_liquid_fraction ** term_b / froude_number ** term_c
-            )
-            return max(answer, no_slip_liquid_fraction)
-        else:
-            _, fr2, fr3, _ = self._calc_transition_froude_numbers(
-                no_slip_liquid_fraction
-            )
-            term_a = (fr3 - froude_number) / (fr3 - fr2)
-            term_b = 1 - term_a
-            answer = (
-                (
-                    term_a * self._calc_horz_liquid_holdup(
-                        FlowPattern.segregated,
-                        froude_number,
-                        no_slip_liquid_fraction
-                    )
-                ) + (
-                    term_b * self._calc_horz_liquid_holdup(
-                        FlowPattern.intermittent,
-                        froude_number,
-                        no_slip_liquid_fraction
-                    )
-                )
-            )
-            return max(answer, no_slip_liquid_fraction)
+        term_a, term_b, term_c = HORZ_LIQUID_HOLDUP_CONSTANTS[flow_pattern]
+        answer = (
+            term_a *
+            no_slip_liquid_fraction ** term_b / froude_number ** term_c
+        )
+        return max(answer, no_slip_liquid_fraction)
 
     def _calc_liquid_velocity_number(self,
                                      liquid_superficial_velocity,
@@ -312,7 +290,6 @@ class Flow(object):
         )
 
     def _calc_liquid_holdup_with_incl(self,
-                                      horz_liquid_holdup,
                                       flow_pattern,
                                       froude_number,
                                       no_slip_liquid_fraction,
@@ -334,37 +311,73 @@ class Flow(object):
         Returns:
             The liquid fraction considering slippage for any inclination.
         """
-        constants = {
-            FlowPattern.segregated:   (0.011, -3.7680, 3.5390, -1.6140),
-            FlowPattern.intermittent: (2.960, 0.3050, -0.4473, 0.0978),
-            FlowPattern.distributed:  (1.0, 1.0, 1.0, 1.0),
-            FlowPattern.transition:  (1.0, 1.0, 1.0, 1.0),
-            FlowPattern.downward:     (4.700, -0.3692, 0.1244, -0.5056)
-        }
-
-        term_d, term_e, term_f, term_g = constants[flow_pattern]
-        inclination_rad = inclination * math.pi/180
-
-        c_parameter = max(0, (
-            (1 - no_slip_liquid_fraction) *
-            math.log(
-                term_d *
-                no_slip_liquid_fraction ** term_e *
-                liquid_velocity_number ** term_f *
-                froude_number ** term_g
+        if flow_pattern != FlowPattern.transition:
+            horz_liquid_holdup = self._calc_horz_liquid_holdup(
+                flow_pattern,
+                froude_number,
+                no_slip_liquid_fraction
             )
-        ))
-        if (flow_pattern == FlowPattern.distributed or
-                flow_pattern == FlowPattern.transition):
-            c_parameter = 0
 
-        phi_parameter = (
-            1 + c_parameter * (
-                math.sin(1.8 * inclination_rad) -
-                0.333 * (math.sin(1.8 * inclination_rad) ** 3)
+            term_d, term_e, term_f, term_g = \
+                LIQUID_HOLDUP_CONSTANTS[flow_pattern]
+
+            inclination_rad = inclination * math.pi/180
+
+            c_parameter = max(0, (
+                (1 - no_slip_liquid_fraction) *
+                math.log(
+                    term_d *
+                    no_slip_liquid_fraction ** term_e *
+                    liquid_velocity_number ** term_f *
+                    froude_number ** term_g
+                )
+            ))
+            if flow_pattern == FlowPattern.distributed:
+                c_parameter = 0
+
+            phi_parameter = (
+                1 + c_parameter * (
+                    math.sin(1.8 * inclination_rad) -
+                    0.333 * (math.sin(1.8 * inclination_rad) ** 3)
+                )
             )
-        )
-        return max(0, min(1, horz_liquid_holdup * phi_parameter))
+            max_value = no_slip_liquid_fraction if inclination < 0 else 1
+            min_value = no_slip_liquid_fraction if inclination >= 0 else 0
+            return max(
+                min_value,
+                min(max_value, horz_liquid_holdup * phi_parameter)
+            )
+        else:
+            _, fr2, fr3, _ = self._calc_transition_froude_numbers(
+                no_slip_liquid_fraction
+            )
+            term_a = (fr3 - froude_number) / (fr3 - fr2)
+            term_b = 1 - term_a
+            answer = (
+                (
+                    term_a * self._calc_liquid_holdup_with_incl(
+                        FlowPattern.segregated,
+                        froude_number,
+                        no_slip_liquid_fraction,
+                        liquid_velocity_number,
+                        inclination
+                    )
+                ) + (
+                    term_b * self._calc_liquid_holdup_with_incl(
+                        FlowPattern.intermittent,
+                        froude_number,
+                        no_slip_liquid_fraction,
+                        liquid_velocity_number,
+                        inclination
+                    )
+                )
+            )
+            max_value = no_slip_liquid_fraction if inclination < 0 else 1
+            min_value = no_slip_liquid_fraction if inclination >= 0 else 0
+            return max(
+                min_value,
+                min(max_value, answer)
+            )
 
     def _calc_grav_pressure_gradient(self,
                                      mixture_specific_gravity,
