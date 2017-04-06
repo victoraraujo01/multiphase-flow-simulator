@@ -114,7 +114,7 @@ class Water(object):
                                      pressure,
                                      bubble_point,
                                      temperature,
-                                     water_compressibility=0.0):
+                                     water_compressibility):
         """
         Calculates the water formation volume factor (:math:`B_w`) using
         Gould's correlation. The bubble point is necessary because a different
