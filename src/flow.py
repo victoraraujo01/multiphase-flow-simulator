@@ -83,6 +83,7 @@ class Flow(object):
             water.viscosity,
             water_fraction
         )
+
         mixture_viscosity_no_slip = estimate_fluid_property(
             liquid_viscosity,
             gas.viscosity,
@@ -199,7 +200,7 @@ class Flow(object):
         Returns:
             THe Froude number.
         """
-        return 0.37267 * (mixture_velocity ** 2) / self.tubing.diameter
+        return (mixture_velocity ** 2) / (32.174 * self.tubing.diameter / 12)
 
     def _calc_transition_froude_numbers(self, no_slip_liquid_fraction):
         """
@@ -262,7 +263,7 @@ class Flow(object):
         term_a, term_b, term_c = HORZ_LIQUID_HOLDUP_CONSTANTS[flow_pattern]
         answer = (
             term_a *
-            no_slip_liquid_fraction ** term_b / froude_number ** term_c
+            no_slip_liquid_fraction ** term_b / (froude_number ** term_c)
         )
         return max(answer, no_slip_liquid_fraction)
 
@@ -286,7 +287,7 @@ class Flow(object):
         """
         return (
             1.938 * liquid_superficial_velocity *
-            (liquid_density / superficial_tension) ** (1/4)
+            (liquid_density / superficial_tension) ** (1 / 4)
         )
 
     def _calc_liquid_holdup_with_incl(self,
@@ -318,10 +319,9 @@ class Flow(object):
                 no_slip_liquid_fraction
             )
 
-            term_d, term_e, term_f, term_g = \
-                LIQUID_HOLDUP_CONSTANTS[flow_pattern]
+            term_d, term_e, term_f, term_g = LIQUID_HOLDUP_CONSTANTS[flow_pattern]
 
-            inclination_rad = inclination * math.pi/180
+            inclination_rad = inclination * math.pi / 180
 
             c_parameter = max(0, (
                 (1 - no_slip_liquid_fraction) *
@@ -397,7 +397,7 @@ class Flow(object):
             The pressure gradient due to gravity :math:`\frac{dP}{dz}` in
             :math:`psi/ft`.
         """
-        _inclination_rad = inclination * math.pi/180
+        _inclination_rad = inclination * math.pi / 180
         return -0.433 * mixture_specific_gravity * math.sin(_inclination_rad)
 
     def _calc_reynolds(self, density, velocity, diameter, viscosity):
@@ -407,7 +407,7 @@ class Flow(object):
         term_a = (
             2.457 * math.log(
                 1 / (
-                    (7/reynolds) ** 0.9 + 0.27 * rugosity
+                    (7 / reynolds) ** 0.9 + 0.27 * rugosity
                 )
             )
         ) ** 16
@@ -415,8 +415,8 @@ class Flow(object):
         answer = (
             8 * (
                 (8 / reynolds) ** 12 +
-                1 / ((term_a + term_b) ** (3/2))
-            ) ** (1/12)
+                1 / ((term_a + term_b) ** (3 / 2))
+            ) ** (1 / 12)
         )
         return answer
 
