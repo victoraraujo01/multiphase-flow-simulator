@@ -1,4 +1,4 @@
-class VogelIPR(object):
+class IPR(object):
 
     def __init__(self, avg_pressure, bubble_point, undersaturated_ip):
         self.avg_pressure = avg_pressure
@@ -28,6 +28,7 @@ class VogelIPR(object):
 
     def flow_rate_above_bubble_point(self, well_pressure):
         return self.undersaturated_ip * (self.avg_pressure - well_pressure)
+
     def flow_rate_below_bubble_point(self, well_pressure):
         pressure = self.bubble_point
         if self.avg_pressure < self.bubble_point:
@@ -41,4 +42,3 @@ class VogelIPR(object):
             self.flow_rate_at_bubble_point
         )
         return flow_rate
-
