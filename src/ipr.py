@@ -1,3 +1,4 @@
+import math
 import ipr_tests_analysis as analysis
 
 class IPR(object):
@@ -71,3 +72,26 @@ class IPR(object):
             self.flow_rate_at_bubble_point
         )
         return flow_rate
+
+    def pressure(self, flow_rate):
+        if flow_rate <= self.flow_rate_at_bubble_point:
+            return self.pressure_below_bubble_point(flow_rate)
+        else:
+            return self.pressure_above_bubble_point(flow_rate)
+
+    def pressure_below_bubble_point(self, flow_rate):
+        return self.avg_pressure - flow_rate / self.undersaturated_ip
+
+    def pressure_above_bubble_point(self, flow_rate):
+        term_a = -(1 + self.b_param) / (self.bubble_point ** 2)
+        term_b = self.b_param / self.bubble_point
+        term_c = (
+            1 - (flow_rate - self.flow_rate_at_bubble_point) /
+            (self.max_flow_rate - self.flow_rate_at_bubble_point)
+        )
+        delta = term_b ** 2 - 4 * term_a * term_c
+
+        pressure = 0
+        if delta >= 0:
+            pressure = max(0, (-term_b - math.sqrt(delta)) / (2 * term_a))
+        return pressure
