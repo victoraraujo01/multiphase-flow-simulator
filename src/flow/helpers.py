@@ -48,44 +48,6 @@ def free_gas_liquid_ratio(pressure,
                 gas_solubility_in_water * _water_cut)
 
 
-def bubble_point(temperature, mixture):
-    """
-    Calculates the mixture's bubble point based on the water cut and the
-    prouction gas liquid ratio.
-
-    Args:
-        _water_cut: Water cut, WC.
-        prod_gas_liquid_ratio: Production gas liquid ratio,
-            :math:`GLR_p` (in the same unit as :math:`R_{so}` and
-            :math:`R_{sw}`, suggestion: :math:`scf/stb`).
-
-    Returns:
-        The mixture's bubble point Pb (psi).
-    """
-    pressure_low = 0.0
-    pressure_high = 100000.0
-    bubble_point_ = 0.0
-    error = 1.0
-    while abs(error) > 1e-10:
-        bubble_point_ = (pressure_low + pressure_high) / 2
-        rso = mixture.oil.calc_gas_solubility(bubble_point_,
-                                              pressure_high,
-                                              temperature)
-        rsw = mixture.water.calc_gas_solubility(bubble_point_,
-                                                pressure_high,
-                                                temperature)
-
-        error = (mixture.prod_gas_liquid_ratio -
-                 (1 - mixture.water_cut) * rso - mixture.water_cut * rsw)
-
-        if error > 0.0:
-            pressure_low = bubble_point_
-        else:
-            pressure_high = bubble_point_
-
-    return bubble_point_
-
-
 def no_slip_fraction(fluid_velocity, total_velocity):
     """
     Calculates the no slip gas fraction of the produced fluid based on the

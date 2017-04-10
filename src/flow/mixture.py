@@ -90,6 +90,43 @@ class Mixture(object):
             self.mixture_density_no_slip
         )
 
+    def bubble_point(self, temperature):
+        """
+        Calculates the mixture's bubble point based on the water cut and the
+        prouction gas liquid ratio.
+
+        Args:
+            _water_cut: Water cut, WC.
+            prod_gas_liquid_ratio: Production gas liquid ratio,
+                :math:`GLR_p` (in the same unit as :math:`R_{so}` and
+                :math:`R_{sw}`, suggestion: :math:`scf/stb`).
+
+        Returns:
+            The mixture's bubble point Pb (psi).
+        """
+        pressure_low = 0.0
+        pressure_high = 100000.0
+        bubble_point_ = 0.0
+        error = 1.0
+        while abs(error) > 1e-10:
+            bubble_point_ = (pressure_low + pressure_high) / 2
+            rso = self.oil.calc_gas_solubility(bubble_point_,
+                                               pressure_high,
+                                               temperature)
+            rsw = self.water.calc_gas_solubility(bubble_point_,
+                                                 pressure_high,
+                                                 temperature)
+
+            error = (self.prod_gas_liquid_ratio -
+                     (1 - self.water_cut) * rso - self.water_cut * rsw)
+
+            if error > 0.0:
+                pressure_low = bubble_point_
+            else:
+                pressure_high = bubble_point_
+
+        return bubble_point_
+
     def in_situ_flow_rate(self, formation_volume_factor, fraction):
         """
         Calculates the in-situ gas flow rate at the given conditions
