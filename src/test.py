@@ -28,7 +28,7 @@ water = Water(1.07, gas)
 mixture = Mixture(gas, oil, water, water_cut, prod_glr, 0.)
 bubble_point = helpers.bubble_point(temperature, mixture)
 
-for flow_rate in np.arange(1, 6000, 10):
+for flow_rate in np.arange(1, 6500, 10):
     tubing = Tubing(10000, 1.995, 90.0, 0.00015)
     gas = Gas(0.7)
     oil = Oil(25.0, gas)
@@ -71,8 +71,10 @@ for flow_rate in np.arange(1, 6000, 10):
     y.append(pressure)
 
 ipr = IPR.from_tests(-0.2, bubble_point, (5000., 1000.), (2000., 5000.))
-y_ipr = range(0, 6000)
-x_ipr = [ipr.flow_rate(pressure) for pressure in y_ipr]
+x_ipr = x
+y_ipr = [ipr.pressure(flow_rate) for flow_rate in x_ipr]
+# y_ipr = range(0, 6000)
+# x_ipr = [ipr.flow_rate(pressure) for pressure in y_ipr]
 
 plt.plot(x, y, x_ipr, y_ipr)
 plt.grid(True)
