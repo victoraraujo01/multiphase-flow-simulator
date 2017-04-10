@@ -1,5 +1,5 @@
 import math
-import ipr_tests_analysis as analysis
+from . import ipr_tests_analysis as analysis
 
 class IPR(object):
 

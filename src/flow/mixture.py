@@ -1,8 +1,8 @@
 import math
-from helpers import free_gas_liquid_ratio
-from helpers import no_slip_fraction
-from helpers import density_to_specific_gravity
-from helpers import estimate_fluid_property
+from .helpers import free_gas_liquid_ratio
+from .helpers import no_slip_fraction
+from .helpers import density_to_specific_gravity
+from .helpers import estimate_fluid_property
 
 
 class Mixture(object):

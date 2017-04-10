@@ -1,5 +1,5 @@
 import math
-from helpers import specific_gravity_from_api
+from .helpers import specific_gravity_from_api
 
 
 class Oil(object):

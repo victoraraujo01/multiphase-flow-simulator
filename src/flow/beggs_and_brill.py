@@ -1,9 +1,7 @@
 import math
-from helpers import free_gas_liquid_ratio
-from helpers import no_slip_fraction
-from helpers import density_to_specific_gravity
-from helpers import estimate_fluid_property
-from flowpattern import FlowPattern
+from .helpers import density_to_specific_gravity
+from .helpers import estimate_fluid_property
+from .flowpattern import FlowPattern
 
 HORZ_LIQUID_HOLDUP_CONSTANTS = {
     FlowPattern.segregated:   (0.980, 0.4846, 0.0868),

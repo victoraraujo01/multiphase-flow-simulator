@@ -1,14 +1,14 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from oil import Oil
-from water import Water
-from gas import Gas
-from mixture import Mixture
-from beggs_and_brill import BeggsAndBrill
-from tubing import Tubing
-from ipr import IPR
-import helpers
+from flow.oil import Oil
+from flow.water import Water
+from flow.gas import Gas
+from flow.mixture import Mixture
+from flow.beggs_and_brill import BeggsAndBrill
+from flow.tubing import Tubing
+from flow import helpers
+from ipr.ipr import IPR
 
 well_head_pressure = 150.0
 temperature = 170.0
