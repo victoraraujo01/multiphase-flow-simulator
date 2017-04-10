@@ -1,4 +1,4 @@
-import src.ipr_tests_analysis as analysis
+import ipr_tests_analysis as analysis
 
 class IPR(object):
 
@@ -56,7 +56,7 @@ class IPR(object):
             return self.flow_rate_below_bubble_point(well_pressure)
 
     def flow_rate_above_bubble_point(self, well_pressure):
-        return self.undersaturated_ip * (self.avg_pressure - well_pressure)
+        return max(0, self.undersaturated_ip * (self.avg_pressure - well_pressure))
 
     def flow_rate_below_bubble_point(self, well_pressure):
         pressure = self.bubble_point
