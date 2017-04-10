@@ -7,15 +7,15 @@ from .helpers import estimate_fluid_property
 
 class Mixture(object):
     """docstring for Flow"""
-    def __init__(self, gas, oil, water, water_cut, prod_gas_liquid_ratio, prod_flow_rate):
+    def __init__(self, gas, oil, water, water_cut, prod_gas_liquid_ratio):
         super(Mixture, self).__init__()
         self.gas = gas
         self.oil = oil
         self.water = water
         self.water_cut = water_cut
         self.prod_gas_liquid_ratio = prod_gas_liquid_ratio
-        self.prod_flow_rate = prod_flow_rate
 
+        self.prod_flow_rate = None
         self.liquid_velocity = None
         self.mixture_velocity = None
         self.no_slip_liquid_fraction = None
@@ -26,7 +26,11 @@ class Mixture(object):
         self.mixture_density_no_slip = None
         self.mixture_specific_grav_no_slip = None
 
-    def update_conditions(self, pressure, bubble_point, tubing_diameter):
+    def update_conditions(self, pressure, bubble_point, temperature, tubing_diameter, flow_rate):
+        self.gas.update_conditions(pressure, temperature)
+        self.oil.update_conditions(pressure, bubble_point, temperature, self.water_cut)
+        self.water.update_conditions(pressure, bubble_point, temperature, self.water_cut)
+
         free_glr = free_gas_liquid_ratio(
             pressure,
             bubble_point,
@@ -35,6 +39,8 @@ class Mixture(object):
             self.water_cut,
             self.prod_gas_liquid_ratio
         )
+
+        self.prod_flow_rate = flow_rate
         gas_flow_rate = self.in_situ_flow_rate(
             self.gas.formation_volume_factor, free_glr
         )
