@@ -35,6 +35,24 @@ class IPR(object):
         avg_pressure, undersaturated_pi = result
         return cls(b_param, avg_pressure, bubble_point, undersaturated_pi)
 
+    @classmethod
+    def from_past_ipr(cls, past_ipr, new_avg_pressure):
+        new_fetkovic_pi = past_ipr.undersaturated_pi * new_avg_pressure / past_ipr.avg_pressure
+        return cls(past_ipr.b_param, new_avg_pressure, past_ipr.bubble_point, new_fetkovic_pi)
+
+    @classmethod
+    def saturated_ipr_from_test(cls, b_param, avg_pressure, first_test):
+        well_pressure, flow_rate = first_test
+        ipr = cls(b_param, avg_pressure, 1e10, 1)
+        ipr.max_flow_rate = (
+            flow_rate /
+            (
+                1.0 + b_param * (well_pressure / avg_pressure) -
+                (1.0 + b_param) * (well_pressure / avg_pressure) ** 2
+            )
+        )
+        return ipr
+
     def calc_flow_rate_at_bubble_point(self):
         return max(0.0, (self.avg_pressure - self.bubble_point) * self.undersaturated_pi)
 
