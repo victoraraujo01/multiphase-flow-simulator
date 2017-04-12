@@ -3,10 +3,10 @@ from . import ipr_tests_analysis as analysis
 
 class IPR(object):
 
-    def __init__(self, b_param, avg_pressure, bubble_point, undersaturated_ip):
+    def __init__(self, b_param, avg_pressure, bubble_point, undersaturated_pi):
         self.avg_pressure = avg_pressure
         self.bubble_point = bubble_point
-        self.undersaturated_ip = undersaturated_ip
+        self.undersaturated_pi = undersaturated_pi
         self.b_param = b_param
 
         self.flow_rate_at_bubble_point = self.calc_flow_rate_at_bubble_point()
@@ -32,11 +32,11 @@ class IPR(object):
                 b_param, bubble_point, high_pressure_test, low_pressure_test
             )
 
-        avg_pressure, undersaturated_ip = result
-        return cls(b_param, avg_pressure, bubble_point, undersaturated_ip)
+        avg_pressure, undersaturated_pi = result
+        return cls(b_param, avg_pressure, bubble_point, undersaturated_pi)
 
     def calc_flow_rate_at_bubble_point(self):
-        return max(0.0, (self.avg_pressure - self.bubble_point) * self.undersaturated_ip)
+        return max(0.0, (self.avg_pressure - self.bubble_point) * self.undersaturated_pi)
 
     def calc_max_flow_rate(self):
         pressure = self.bubble_point
@@ -45,7 +45,7 @@ class IPR(object):
 
         qmax = (
             self.flow_rate_at_bubble_point +
-            self.undersaturated_ip * pressure /
+            self.undersaturated_pi * pressure /
             (2.0 + self.b_param)
         )
         return qmax
@@ -57,7 +57,7 @@ class IPR(object):
             return self.flow_rate_below_bubble_point(well_pressure)
 
     def flow_rate_above_bubble_point(self, well_pressure):
-        return max(0, self.undersaturated_ip * (self.avg_pressure - well_pressure))
+        return max(0, self.undersaturated_pi * (self.avg_pressure - well_pressure))
 
     def flow_rate_below_bubble_point(self, well_pressure):
         pressure = self.bubble_point
@@ -75,16 +75,20 @@ class IPR(object):
 
     def pressure(self, flow_rate):
         if flow_rate <= self.flow_rate_at_bubble_point:
-            return self.pressure_below_bubble_point(flow_rate)
-        else:
             return self.pressure_above_bubble_point(flow_rate)
-
-    def pressure_below_bubble_point(self, flow_rate):
-        return self.avg_pressure - flow_rate / self.undersaturated_ip
+        else:
+            return self.pressure_below_bubble_point(flow_rate)
 
     def pressure_above_bubble_point(self, flow_rate):
-        term_a = -(1 + self.b_param) / (self.bubble_point ** 2)
-        term_b = self.b_param / self.bubble_point
+        return self.avg_pressure - flow_rate / self.undersaturated_pi
+
+    def pressure_below_bubble_point(self, flow_rate):
+        pressure = self.bubble_point
+        if self.avg_pressure < self.bubble_point:
+            pressure = self.avg_pressure
+
+        term_a = -(1 + self.b_param) / (pressure ** 2)
+        term_b = self.b_param / pressure
         term_c = (
             1 - (flow_rate - self.flow_rate_at_bubble_point) /
             (self.max_flow_rate - self.flow_rate_at_bubble_point)
