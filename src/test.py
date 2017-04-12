@@ -36,10 +36,18 @@ def main():
     ipr = IPR.from_tests(-0.2, bubble_point, (5000., 1000.), (2000., 5000.))
     y_ipr = [ipr.pressure(flow_rate) for flow_rate in x]
 
+    ipr2 = IPR.from_past_ipr(ipr, ipr.avg_pressure - 1500)
+    y_ipr2 = [ipr2.pressure(flow_rate) for flow_rate in x]
+
+    ipr3 = IPR.from_past_ipr(ipr, ipr.avg_pressure - 3000)
+    y_ipr3 = [ipr3.pressure(flow_rate) for flow_rate in x]
+
     plt.plot(x, y, label="TPR 2 3/8\"")
     plt.plot(x, y2, label="TPR 3 1/2\"")
     plt.plot(x, y3, label="TPR 4 1/2\"")
     plt.plot(x, y_ipr, label="IPR")
+    plt.plot(x, y_ipr2, label="IPR 2")
+    plt.plot(x, y_ipr3, label="IPR 3")
     plt.grid(True)
     plt.xlabel('Flow rate')
     plt.ylabel('Pressure')
